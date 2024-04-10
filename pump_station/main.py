@@ -10,6 +10,10 @@ def low_level_controller(settings_pump, q):
     print("low level hallow world")
     last_sample_time = time.time() #unix time 
     ref = 0
+    k_p = 1
+    k_i = 1
+    upper_limit = 100
+    lower_limit = 0
 
     MB_flow = ModbusClient(host = settings_pump['ip_pipe'], port = 502, auto_open = True)
     MB_pump = ModbusClient(host = settings_pump['ip_pump'], port = 502, auto_open=True)
@@ -31,7 +35,25 @@ def low_level_controller(settings_pump, q):
         error = ref - flow
         print(error)
         #Insert PID controller
-        pump_precentage = 100
+        
+
+        proportional = k_p*error
+        if(saturation == True):
+            integral = 0
+        else:
+            integral = integral + k_i*error*(time.time()-last_sample_time)
+
+        PI_output = proportional + integral
+
+        if(PI_output>upper_limit):
+            pump_precentage = 100
+            saturation = True
+        elif(PI_output<lower_limit):
+            pump_precentage = 0
+            saturation = True
+        else:
+            pump_precentage = PI_output
+        
 
         #Perform supervisory level control and output actuation if ok
         pump_tank_level = MB_pump.read_input_registers(settings_pump['register_pump_tank'], 1)[0]

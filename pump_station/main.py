@@ -8,12 +8,12 @@ from multiprocess_test import multiprocess_test
 def low_level_controller(settings_pump, q):
     #q is queue where new refrence can be put
     print("low level hallow world")
-    last_sample_time = time.time()
+    last_sample_time = time.time() #unix time 
     ref = 0
 
     MB_flow = ModbusClient(host = settings_pump['ip_pipe'], port = 502, auto_open = True)
     MB_pump = ModbusClient(host = settings_pump['ip_pump'], port = 502, auto_open=True)
-    MB_tower = ModbusClient(settings_pump['ip_tower'], port = 502, auto_open = True)
+    MB_tower = ModbusClient(host = settings_pump['ip_tower'], port = 502, auto_open = True)
 
     while True:
         sleep_time = last_sample_time + settings_pump['sampletime']  - time.time()
@@ -42,7 +42,6 @@ def low_level_controller(settings_pump, q):
             print("Safty level control active")
         else:
             MB_pump.write_single_register(settings_pump['register_pump'], 100*pump_precentage) 
-            MB_pump.write_single_register(6, 100*pump_precentage) 
 
 
 def example():

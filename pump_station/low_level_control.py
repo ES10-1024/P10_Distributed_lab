@@ -1,8 +1,5 @@
 import time
-import multiprocessing
 from pyModbusTCP.client import ModbusClient
-from low_level_settings import settings_pump1, settings_pump2
-
 
 
 def low_level_controller(settings, refrence_queue):
@@ -64,22 +61,7 @@ def low_level_controller(settings, refrence_queue):
         
             MB_pump.write_single_register(settings['register_pump'], int(100*pump_percentage)) 
 
-if __name__ == '__main__':
-    refence_queue = multiprocessing.Queue(1)
-    low_level_control_pump1 = multiprocessing.Process(target = low_level_controller,args = (settings_pump1,refence_queue))
-    low_level_control_pump2 = multiprocessing.Process(target = low_level_controller,args = (settings_pump2,refence_queue))
-    low_level_control_pump1.start()
-    low_level_control_pump2.start()
-    refence_queue.put(0)
-    #print("hallow world")
-    i=0
 
-    while True:
-        #Perform high level control
-        #print("High level hi")
-        i=0.05
-        refence_queue.put(i)
-        time.sleep(5)
 
 
 

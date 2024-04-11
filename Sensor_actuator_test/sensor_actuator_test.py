@@ -9,26 +9,20 @@ from pyModbusTCP.client import ModbusClient
 import numpy as np
 import time
 
-ip_addr = '192.168.100.34'  #Module IP adress
+ip_addr = '192.168.100.20'  #Module IP adress
 
 MB = ModbusClient(host=ip_addr, port=502, auto_open=True)
-time.sleep(3)
+time.sleep(1)
 if MB.open():
     print("Modbus open")
 else:
     print("Modbus not open")
 
-data = MB.read_input_registers(1,18)
-print(data)
+while True:
 
-print(MB.read_input_registers(1,1)[0])
-print(MB.read_input_registers(2,1)[0])
-print(MB.read_input_registers(3,1)[0])
-print(MB.read_input_registers(4,1)[0])
-print(MB.read_input_registers(5,1)[0])
-print(MB.read_input_registers(6,1)[0])
-print(MB.read_input_registers(7,1)[0])
-
+    data = MB.read_input_registers(0,25)
+    print(data)
+    time.sleep(2)
 
 """
 MB.write_single_register(6,50*100)

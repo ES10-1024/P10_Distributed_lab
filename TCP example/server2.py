@@ -8,11 +8,12 @@ Author: Lau Lauridsen
 import socket
 import time
 print("Script started")
-print("Script started")
 
-HOST = "192.168.100.24"  # Standard loopback interface address (localhost)
+#HOST = "192.168.100.24"  # Its own IP adress
+HOST = "127.0.0.1"
 PORT = 6644  # Port to listen on (non-privileged ports are > 1023)
 s= socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 s.bind((HOST, PORT))
 s.listen()
 conn, addr = s.accept()
@@ -25,7 +26,7 @@ while True:
         conn.sendall(data)
     except:
         print("Going to sleep")
-        time.sleep(10)
+        time.sleep(5)
         print("Awake")
     
 s.close()

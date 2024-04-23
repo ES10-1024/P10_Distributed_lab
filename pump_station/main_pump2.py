@@ -2,8 +2,7 @@ import time
 import socket
 import multiprocessing
 from pyModbusTCP.client import ModbusClient
-from low_level_settings import settings_pump1
-
+from low_level_settings import settings_pump2
 
 def low_level_controller(settings_pump,q):
     #q is queue where new refrence can be put
@@ -29,7 +28,7 @@ def low_level_controller(settings_pump,q):
         #print(ref)
 
         error = ref - flow
-        # print(error)
+        #print(error)
         #Insert PID controller
         pump_precentage = 100
 
@@ -44,49 +43,41 @@ def low_level_controller(settings_pump,q):
             MB_pump.write_single_register(settings_pump['register_pump'], 100*pump_precentage) 
 
 
+
+
 if __name__ == '__main__':
 
     try:
         #Start low level controller
         refence_queue = multiprocessing.Queue(1)
-        refence_queue.put(0)
-        low_level_control_process = multiprocessing.Process(target = low_level_controller,args = (settings_pump1,refence_queue,))
+        low_level_control_process = multiprocessing.Process(target = low_level_controller,args = (settings_pump2,refence_queue))
         low_level_control_process.start()
+        refence_queue.put(0)
         print("Low level controller started")
 
-        #Set up connection to tower as client 
+        #Set up connecion to tower as client
         tower_IP = '192.168.100.34'
-        port_tower_pump1 = 5400
+        port_tower_pump2 = 5401
         s_tower=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s_tower.connect((tower_IP, port_tower_pump1))
+        s_tower.connect((tower_IP, port_tower_pump2))
         print("Connected to tower")
 
-        #Set up connecion to pump 2 as server
+        #Set up connecion to pump 2 as client
         pump1_IP = '192.168.100.144'
-        port_pump2 = 5402
-        s_pump2= socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s_pump2.bind((pump1_IP, port_pump2))
-        s_pump2.listen()
-        conn_pump2, addr_pump1 = s_pump2.accept()
-        print("Connected to pump 2, all TCP connections setup")
-
-
+        port_pump1_pump2 = 5402
+        s_pump1= socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s_pump1.connect((pump1_IP,port_pump1_pump2))
+        print("Connected to pump 2, all TCP connecttions set up")
         
+        i=0
         while True:
             #Perform high level control
-            i=0
             print("High level hi")
             time.sleep(5)
             refence_queue.put(i)
+            i=i+0.1
             
     except KeyboardInterrupt:
-        refence_queue.put(0)
-        time.sleep(10)
-        s_pump2.close()
-        print("Connections closed")
-
-
-
-
-
-
+       refence_queue.put(0)
+       time.sleep(10)
+       print("Connections closed")

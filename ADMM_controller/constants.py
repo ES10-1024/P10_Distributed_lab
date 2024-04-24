@@ -2,7 +2,7 @@ import numpy as np
 
 c_pump1 = {
     "Q_min":0,                  #Minimum daily limit[m^3/day]
-    "Q_max":10,                 #TYEL [m^3/day]
+    "Q_max":3.6,                 #TYEL [m^3/day]
     "q_min":0,                  #Minimum mass flow [m^3/h]
     "q_max":0.3,                #Maximum mass flow[m^3/h]
     "eta":0.909,                #Efficincy of pump
@@ -12,7 +12,7 @@ c_pump1 = {
 
 c_pump2 = {
     "Q_min":0,                  #Minimum daily limit[m^3/day]
-    "Q_max":10,                 #TYEL [m^3/day]
+    "Q_max":3.6,                 #TYEL [m^3/day]
     "q_min":0,                  #Minimum mass flow [m^3/h]
     "q_max":0.3,                #Maximum mass flow[m^3/h]
     "eta":0.796,                #Efficincy of pump

@@ -2,16 +2,17 @@ import casadi as ca
 import numpy as np
 
 from constants import c_general, c_tower
-from cost_const import define_cost_func_and_constraints
-from cost_const import Uc
+from cost_const import define_cost_func_and_constraints, Uc
+from Get_Electricity_Flow import electricity_price_and_flow
 
 
-def performOptimisation():
+def performOptimisation(time, h):
 
-    h = 300
-    V_0 = h/1000*c_tower['A_t']
-    d = 0.01* np.ones((c_general['N_c'],1)) #Placeholder for en vektor af demand over prediction horizon
-    J_e = np.ones((c_general['N_c'], 1)) #Endnu en placeholder
+    consumption, d, J_e = electricity_price_and_flow(time)
+    J_e = np.round(J_e, 4)
+    d = np.round(d, 4)
+
+    V_0 = np.round(h/1000*c_tower['A_t'], 4)
 
 
     #Define cost function and constraints
@@ -34,8 +35,11 @@ def performOptimisation():
     sol = opti.solve()
     #Print solution
     u_hat = sol.value(U_k)
-    print('I AM ALIVE!!!')
-    print(u_hat)
+    u_hat = np.round(u_hat, 4)
+    #print('Predicted Demand:', d)
+    #print('Electricity prices: ', J_e)
+    print('U: ', u_hat)
+    #print('Initial Volume: ', V_0)
 
     return u_hat
 

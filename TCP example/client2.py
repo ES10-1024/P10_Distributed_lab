@@ -10,6 +10,7 @@ import socket
 import struct
 import time
 import numpy as np
+import pickle
 
 #HOST = "192.168.100.24"  # The server's hostname or IP address
 HOST = "127.0.0.1"
@@ -34,11 +35,13 @@ while True:
 """
 
 while True:
-    np.array([5,7,9])
-    s.sendall(np.tobytes())
+    a= np.array([5,7,9])
+    s.sendall(a.tobytes())
+    print("Message sent")
     data =0
     data = s.recv(1024)
-    returned_message = np.frombuffer(data)
+    print(data)
+    returned_message = np.frombuffer(data,dtype=a.dtype)
     
     print("Received",returned_message)
-    time.sleep(10)
+    time.sleep(60)

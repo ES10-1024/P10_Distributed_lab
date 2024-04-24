@@ -46,8 +46,8 @@ class ADMM_optimiser_WDN:
             self.conn1.sendall(self.z_i.tobytes())  #Distribute z_i
             self.conn2.sendall(self.z_i.tobytes())
 
-            self.z_2 = np.frombuffer(self.conn1.recv(8*self.Nc*self.N_q), dtype=self.z_i.dtype) #Recive other z_i's
-            self.z_3 = np.frombuffer(self.conn2.recv(8*self.Nc*self.N_q), dtype=self.z_i.dtype)
+            self.z_2 = np.frombuffer(self.conn1.recv(8*self.N_c*self.N_q), dtype=self.z_i.dtype) #Recive other z_i's
+            self.z_3 = np.frombuffer(self.conn2.recv(8*self.N_c*self.N_q), dtype=self.z_i.dtype)
 
             self.z_tilde = self.z_i + self.z_2+ self.z_3
             self.lambda_i_tilde = self.lambda_i + self.rho*(self.z - self.z_tilde)
@@ -60,8 +60,8 @@ class ADMM_optimiser_WDN:
                 self.conn1.sendall(self.x_i.tobytes())  #Distribute x_i for residual calculation 
                 self.conn2.sendall(self.x_i.tobytes())
 
-                self.x_2 = np.frombuffer(self.conn1.recv(8*self.Nc*self.N_q), dtype= self.x_i.dtype) #Recive x_i's for reidual calculation
-                self.x_3 = np.frombuffer(self.conn2.recv(8*self.Nc*self.N_q), dtype= self.x_i.dtype)
+                self.x_2 = np.frombuffer(self.conn1.recv(8*self.N_c*self.N_q), dtype= self.x_i.dtype) #Recive x_i's for reidual calculation
+                self.x_3 = np.frombuffer(self.conn2.recv(8*self.N_c*self.N_q), dtype= self.x_i.dtype)
 
                 self.x_bar_old = self.x_bar
                 self.x_bar = self.x_i + self.x_2 + self.x_3

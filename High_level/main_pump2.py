@@ -9,7 +9,7 @@ from functions import ADMM_optimiser_WDN
 if __name__ == '__main__':
 
     #Set up connecion to tower as client
-    tower_IP = '192.168.100.34'
+    tower_IP = '192.168.100.32'
     tower_IP = "127.0.0.1"
     port_tower_pump2 = 5401
     s_tower=socket.socket(socket.AF_INET, socket.SOCK_STREAM)

@@ -4,7 +4,7 @@ import time
 from functions import ADMM_optimiser_WDN
 
 
-tower_IP = '192.168.100.34'
+tower_IP = '192.168.100.32'
 tower_IP = "127.0.0.1"
 port_pump1 = 5400
 port_pump2 = 5401

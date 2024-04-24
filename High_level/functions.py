@@ -48,11 +48,14 @@ class ADMM_optimiser_WDN:
 
             self.z_2 = np.frombuffer(self.conn1.recv(8*self.N_c*self.N_q), dtype=self.z_i.dtype) #Recive other z_i's
             self.z_3 = np.frombuffer(self.conn2.recv(8*self.N_c*self.N_q), dtype=self.z_i.dtype)
+            
+            #Determing Z and lambda 
+            self.z_tilde = 1/self.N_s*(self.z_i + self.z_2+ self.z_3)
+            self.lambda_i_tilde = self.lambda_i + self.rho*(self.x_i - self.z)
 
-            self.z_tilde = self.z_i + self.z_2+ self.z_3
-            self.lambda_i_tilde = self.lambda_i + self.rho*(self.z - self.z_tilde)
-            self.z = self.z - 1/(self.N_s + 1)*(self.z - self.z_tilde)
+            self.z = self.z - 1/(self.N_s + 1)*(self.z - self.z_tilde)            
             self.lambda_i = self.lambda_i -1/(self.N_s + 1)*(self.lambda_i - self.lambda_i_tilde) 
+            
             ### END ADMM 
             
             ### BEGIN find rho
@@ -64,7 +67,7 @@ class ADMM_optimiser_WDN:
                 self.x_3 = np.frombuffer(self.conn2.recv(8*self.N_c*self.N_q), dtype= self.x_i.dtype)
 
                 self.x_bar_old = self.x_bar
-                self.x_bar = self.x_i + self.x_2 + self.x_3
+                self.x_bar = 1/self.N_s*(self.x_i + self.x_2 + self.x_3)
                 self.r_norm_squared =  np.linalg.norm(self.x_i - self.x_bar, 2)**2 + np.linalg.norm(self.x_2 - self.x_bar, 2)**2 + np.linalg.norm(self.x_3 - self.x_bar, 2)**2
                 self.s_norm = self.N_s*self.rho**2*np.linalg.norm(self.x_bar - self.x_bar_old,2)
 
@@ -74,5 +77,6 @@ class ADMM_optimiser_WDN:
                     self.rho = self.rho / self.tau
                 print(self.rho)
             ### End find rho
+            
             
         return self.x_i[:2]       #Return actuation commands

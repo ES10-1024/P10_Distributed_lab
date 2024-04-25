@@ -65,7 +65,7 @@ def define_cost_func_and_constraints(d, V_0, J_e):
     A_q_min = -eye_NcNq
     b_q_min = zeros_NcNq
     
-    #Constraints for min and max flow for the pumps
+    #Constraints max flow for the pumps, and extration limith
     A_Q_max1, b_Q_max1, A_q_max1, b_q_max1 = pump_specific_constraints(c_pump1, 1 , A_31)
     A_Q_max2, b_Q_max2, A_q_max2, b_q_max2 = pump_specific_constraints(c_pump2, 2 , A_32)
 

@@ -31,6 +31,7 @@ def performOptimisation(time, h):
     opti.subject_to(A @ U_k <= b)
     #Choose solver
     opti.solver('ipopt')
+
     #Solve
     sol = opti.solve()
     #Print solution

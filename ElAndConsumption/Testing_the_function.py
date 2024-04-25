@@ -1,6 +1,6 @@
 import scipy.io
 #loading in the function for the to get the electricty price and consumption
-from ElAndConsumption import ElAndConsumption
+from casadi_implementation import ElAndConsumption
 print("hello world")
 
 

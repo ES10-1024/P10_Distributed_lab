@@ -1,6 +1,6 @@
 import scipy.io
 
-def ElAndConsumption(time):
+def electricity_price_and_flow(time):
     """
     Extracts data from position x and 24 steps forward, 
     for the electricty and prediction consumption data.

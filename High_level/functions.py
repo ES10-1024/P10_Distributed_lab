@@ -1,8 +1,10 @@
 import numpy as np
+from Solve_each_ADMM import performOptimisation
 
-def local_optimiser(hour : int, water_height : float, z: np.array, rho : float, stakeholder : int):
-     x_i = np.arange(48)*0.99
-     return x_i
+
+#def local_optimiser(hour : int, water_height : float, z: np.array, rho : float, stakeholder : int):
+#     x_i = np.arange(48)*0.99
+#     return x_i
 
 class ADMM_optimiser_WDN:
     def __init__(self, conn1, conn2, N_iterations : int,  N_vary_rho: int, stakeholder: int):
@@ -15,16 +17,17 @@ class ADMM_optimiser_WDN:
         self.N_s = 3    #Number of stakeholders
         self.N_q = 2    #number of pumps
         
-        self.rho = 2    #Initial
+        self.rho = 4    #Initial
         self.mu = 10    #Vary rho algorithm parameter
         self.tau = 2    #Vary rho algorithm parameter
 
-        self.z=np.zeros(self.N_c*self.N_q) #Initialization ADMM
+        self.z=np.zeros((self.N_c*self.N_q,1)) #Initialization ADMM
+
 
 
     def optimise(self, hour : int , water_height: float):
-        self.lambda_i = np.zeros(self.N_c*self.N_q) #ADMM Initialisation
-        self.x_bar = np.zeros(self.N_c*self.N_q) #ADMM Initialisation
+        self.lambda_i = np.zeros((self.N_c*self.N_q,1)) #ADMM Initialisation
+        self.x_bar = np.zeros((self.N_c*self.N_q,1)) #ADMM Initialisation
         
         #Timeshift initial guess
         self.z = np.roll(self.z,1)
@@ -35,25 +38,30 @@ class ADMM_optimiser_WDN:
             print("Iteration", k)
             #Solve local problem
             try: 
-                self.x_i = local_optimiser(hour, water_height, self.z, self.rho, self.stakeholder) 
+                self.x_i = performOptimisation(hour, water_height, self.stakeholder,self.rho,self.lambda_i,self.z)
+                #Reshaping the result 
+                self.x_i= self.x_i.reshape(-1, 1)
             except:
                 self.x_i = 3/4*self.x_i + 1/4*self.z
                 print("Local optimisation failed")
 
             ### BEGIN ADMM
-            self.z_i = self.x_i + 1/self.rho*self.lambda_i #Stakeholders entry in sum
-
+            #Determining z: 
+            self.z_i = self.x_i + (1/self.rho)*self.lambda_i #Stakeholders entry in sum
             self.conn1.sendall(self.z_i.tobytes())  #Distribute z_i
             self.conn2.sendall(self.z_i.tobytes())
 
             self.z_2 = np.frombuffer(self.conn1.recv(8*self.N_c*self.N_q), dtype=self.z_i.dtype) #Recive other z_i's
             self.z_3 = np.frombuffer(self.conn2.recv(8*self.N_c*self.N_q), dtype=self.z_i.dtype)
-            
-            #Determing Z and lambda 
+            #Reshaping the recevied data 
+            self.z_2= self.z_2.reshape(-1, 1)
+            self.z_3= self.z_3.reshape(-1, 1)
+            #Determining ztilde and z 
             self.z_tilde = 1/self.N_s*(self.z_i + self.z_2+ self.z_3)
-            self.lambda_i_tilde = self.lambda_i + self.rho*(self.x_i - self.z)
-
-            self.z = self.z - 1/(self.N_s + 1)*(self.z - self.z_tilde)            
+            self.z = self.z - 1/(self.N_s + 1)*(self.z - self.z_tilde)   
+            
+            #Determining lambda: 
+            self.lambda_i_tilde = self.lambda_i + self.rho*(self.x_i - self.z)         
             self.lambda_i = self.lambda_i -1/(self.N_s + 1)*(self.lambda_i - self.lambda_i_tilde) 
             
             ### END ADMM 

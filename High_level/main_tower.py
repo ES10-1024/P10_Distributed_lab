@@ -2,6 +2,7 @@ import socket
 import numpy as np
 import time
 from functions import ADMM_optimiser_WDN
+from constants import c_general
 
 
 tower_IP = '192.168.100.32'
@@ -24,15 +25,23 @@ s_pump2.listen()
 conn_pump2, addr_pump2 = s_pump2.accept()
 print("Connected to pump 2, all TCP connections setup")
 
-
-optimiser = ADMM_optimiser_WDN(conn_pump1, conn_pump2,150, 10, 1)
-
+#Loading in the classe, 125=iterations, 10=iterations with changing rho, 1=stakeholder number
+optimiser = ADMM_optimiser_WDN(conn_pump1, conn_pump2,125, 10, 1)
+#setting time since last sample if 0, used determining input now, if time.time() waits the sample time
+last_sample_time = 0 #time.time() #unix time 
+#Setting the hour we start working with
+hour = 1
 while True:
+        #Determine the time to next sample, and sleeping if time remains
+        sleep_time = last_sample_time + c_general["t_s"] - time.time()
+        if sleep_time>0:  
+                time.sleep(sleep_time)
+        last_sample_time = time.time()      #unix time 
         #Perform high level control
-        stakeholder = 1
-        water_level = 200
-        U=optimiser.optimise(stakeholder, water_level)
+        water_level = 300
+        U=optimiser.optimise(hour, water_level)
         print(U)
-        time.sleep(0.1)
+        #Another hour has gone by
+        hour=hour+1 
 
 

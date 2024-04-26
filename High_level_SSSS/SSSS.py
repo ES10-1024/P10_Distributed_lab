@@ -64,19 +64,22 @@ class SSSS:
              self.conn2.sendall(b1x3.tobytes())
              
              #Reciving from the others: 
-             b2x1 = np.frombuffer(self.conn1.recv(8*self.N_c*self.N_q), dtype=b1x1) #Recive other z_i's
-             b3x1 = np.frombuffer(self.conn2.recv(8*self.N_c*self.N_q), dtype=b1x1)
+             b2x1 = np.frombuffer(self.conn1.recv(8*self.N_c*self.N_q), dtype=b1.dtype) #Recive other z_i's
+             b3x1 = np.frombuffer(self.conn2.recv(8*self.N_c*self.N_q), dtype=b1.dtype)
              #Reshaping the recevied data 
+             b1x1= b1x1.reshape(-1, 1)
              b2x1= b2x1.reshape(-1, 1)
              b3x1= b3x1.reshape(-1, 1)
              # Adding the Recived up and sending it out: 
              b1=b1x1+b2x1+b3x1
+             print("b1",b1.shape)
              self.conn1.sendall(b1.tobytes())  
              self.conn2.sendall(b1.tobytes())
              #Reciving b2 and b3 
-             b2 = np.frombuffer(self.conn1.recv(8*self.N_c*self.N_q), dtype=b1) #Recive other z_i's
-             b3 = np.frombuffer(self.conn2.recv(8*self.N_c*self.N_q), dtype=b1)
-             #Reshaping the recevied data 
+             b2 = np.frombuffer(self.conn1.recv(8*self.N_c*self.N_q), dtype=b1.dtype) #Recive other z_i's
+             b3 = np.frombuffer(self.conn2.recv(8*self.N_c*self.N_q), dtype=b1.dtype)
+             #Reshaping the recevied data
+             b1= b1.reshape(-1, 1) 
              b2= b2.reshape(-1, 1)
              b3= b3.reshape(-1, 1)
              
@@ -94,51 +97,69 @@ class SSSS:
              self.conn1.sendall(b2x1.tobytes())  
              self.conn2.sendall(b2x3.tobytes())
              #Reciving from the others: 
-             b1x2 = np.frombuffer(self.conn1.recv(8*self.N_c*self.N_q), dtype=b2x1) #Recive other z_i's
-             b3x2 = np.frombuffer(self.conn2.recv(8*self.N_c*self.N_q), dtype=b2x1)
+             b1x2 = np.frombuffer(self.conn1.recv(8*self.N_c*self.N_q), dtype=b2.dtype) #Recive other z_i's
+             b3x2 = np.frombuffer(self.conn2.recv(8*self.N_c*self.N_q), dtype=b2.dtype)
              #Reshaping the recevied data 
              b1x2= b1x2.reshape(-1, 1)
+             b2x2= b2x2.reshape(-1, 1)
              b3x2= b3x2.reshape(-1, 1)
              # Adding the Recived up and sending it out: 
              b2=b1x2+b2x2+b3x2
+             print("b2",b2.shape) 
              self.conn1.sendall(b2.tobytes())  
              self.conn2.sendall(b2.tobytes())
              #Reciving b1 and b3 
-             b1 = np.frombuffer(self.conn1.recv(8*self.N_c*self.N_q), dtype=b2) #Recive other z_i's
-             b3 = np.frombuffer(self.conn2.recv(8*self.N_c*self.N_q), dtype=b2)
+             b1 = np.frombuffer(self.conn1.recv(8*self.N_c*self.N_q), dtype=b2.dtype) #Recive other z_i's
+             b3 = np.frombuffer(self.conn2.recv(8*self.N_c*self.N_q), dtype=b2.dtype)
              #Reshaping the recevied data 
              b1= b1.reshape(-1, 1)
+             b2= b2.reshape(-1, 1)
              b3= b3.reshape(-1, 1)
              
         if self.stakeholder==3: # pump 2 ID 3
-             #conn1 = tower ID: 1 
-             #conn2 = pump 1 ID 2  
-             #Picking out the differenct b: 
-             b3x1=maskedSecret[0,:]
-             b3x2=maskedSecret[1,:]
-             b3x3=maskedSecret[2,:]
-             #Distrubtion to the rest of the stakeholders: 
-             self.conn1.sendall(b3x1.tobytes())  
-             self.conn2.sendall(b3x2.tobytes())
-             
-             #Reciving from the others: 
-             b1x3 = np.frombuffer(self.conn1.recv(8*self.N_c*self.N_q), dtype=b3x1) #Recive other z_i's
-             b2x3 = np.frombuffer(self.conn2.recv(8*self.N_c*self.N_q), dtype=b3x1)
-             #Reshaping the recevied data 
-             b1x2= b1x2.reshape(-1, 1)
-             b2x3= b2x3.reshape(-1, 1)
-             # Adding the Recived up and sending it out: 
-             b3=b1x3+b2x3+b3x3 
-             self.conn1.sendall(b3.tobytes())  
-             self.conn2.sendall(b3.tobytes())
-             #Reciving b1 and b3 
-             b1 = np.frombuffer(self.conn1.recv(8*self.N_c*self.N_q), dtype=b3) #Recive other z_i's
-             b2 = np.frombuffer(self.conn2.recv(8*self.N_c*self.N_q), dtype=b3)
-             #Reshaping the recevied data 
-             b1= b1.reshape(-1, 1)
-             b2= b3.reshape(-1, 1)
-     
-        bstacked=np.vstack((b1,b2,b3))
+                 # conn1 = tower ID: 1 
+                 # conn2 = pump 1 ID 2  
+                 # Picking out the different b: 
+                 print("stakeholder 3")
+                 b3x1 = maskedSecret[0, :]
+                 b3x2 = maskedSecret[1, :]
+                 b3x3 = maskedSecret[2, :]
+                
+                 # Distribution to the rest of the stakeholders: 
+                 self.conn1.sendall(b3x1.tobytes())  
+                 self.conn2.sendall(b3x2.tobytes())
+                
+                 # Receiving from the others: 
+                 b1x3 = np.frombuffer(self.conn1.recv(8*self.N_c*self.N_q), dtype=b3.dtype) # Receive other z_i's
+                 b2x3 = np.frombuffer(self.conn2.recv(8*self.N_c*self.N_q), dtype=b3.dtype)
+                
+                 # Reshaping the received data 
+                 b1x3 = b1x3.reshape(-1, 1)
+                 b2x3 = b2x3.reshape(-1, 1)
+                 b3x3 = b3x3.reshape(-1, 1)
+                 print("Shape of b1x3:", b1x3.shape)
+                 print("Shape of b2x3:", b2x3.shape)
+                 print("Shape of b3x3:", b3x3.shape)
+                 # Adding the received up and sending it out: 
+                 b3 = b1x3 + b2x3 + b3x3 
+                 print("b3",b3.shape)
+
+                 self.conn1.sendall(b3.tobytes())  
+                 self.conn2.sendall(b3.tobytes())
+                
+                 # Receiving b1 and b2 
+                 b1 = np.frombuffer(self.conn1.recv(8*self.N_c*self.N_q), dtype=b3.dtype) # Receive other z_i's
+                 b2 = np.frombuffer(self.conn2.recv(8*self.N_c*self.N_q), dtype=b3.dtype)
+                
+                 # Reshaping the received data 
+                 b1 = b1.reshape(-1, 1)
+                 b2 = b2.reshape(-1, 1)
+                 b3 = b3.reshape(-1, 1)
+# Assuming b1, b2, and b3 are NumPy arrays
+        print("Shape of b1:", b1.shape)
+        print("Shape of b2:", b2.shape)
+        print("Shape of b3:", b3.shape)
+        bstacked=np.vstack((b1.T,b2.T,b3.T))
         #Getting out the secret value: 
         summedSecret=self.getSecret(bstacked)
         

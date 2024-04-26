@@ -33,7 +33,7 @@ if __name__ == '__main__':
     hour = 1
     
     
-    secret=np.ones((48,1))*5 
+    secret=np.ones((48,1))*5.1
     ssss_instance = SSSS(conn1=s_tower, conn2=s_pump1,stakeholder=3)
     summedSecret=ssss_instance.DoSSSS(secret) 
     print(summedSecret)

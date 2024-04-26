@@ -68,6 +68,10 @@ def define_Jp(pump_constants, A_3, J_e, h_V, d,rho,Lambda,z):
     return J_e.T @ P
 
 
+
+
+
+
 def define_cost_func_and_constraints_ADMM(d,V_0, J_e, stakeholderID,rho,Lambda,z): 
     #Must be defined before cost function can be found
     #Flow into the tower

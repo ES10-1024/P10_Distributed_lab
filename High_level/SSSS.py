@@ -2,14 +2,13 @@ import numpy as np
 import random
 
 class SSSS: 
-    def __init__(self, stakeholder):
+    def __init__(self):
         self.offset = 1 #Offset to avoid negative values  
         self.scaling = 10000 #Scaling such rounding becomes insignificant
         self.N_c = 24   #Control horizon
         self.N_q = 2    #number of pumps
         self.Beta = 10000019 # Prime number used for SSSS 
         self.N_s = 3 #Number of stakeholders
-        self.stakeholder=stakeholder 
     
     #Hidding the secret in second degrees polyniums  
     def generatedOutFromFunction(self, secret): 
@@ -40,27 +39,23 @@ class SSSS:
             #Descaling the result: 
             summedSecret[index]=(summedSecret[index]-(self.N_s*self.scaling))/self.scaling 
         return summedSecret
-    def DoSSSS(): 
-        
-        return  
-    
             
             
             
                     
         
 # Example usage
-#ssss = SSSS()
-#secret = np.ones((48, 1))
+ssss = SSSS()
+secret = np.ones((48, 1))
     
-#result1 = ssss.generatedOutFromFunction(secret*2)
-#result2 = ssss.generatedOutFromFunction(secret*5)
-#result3 = ssss.generatedOutFromFunction(secret*1)
+result1 = ssss.generatedOutFromFunction(secret*2)
+result2 = ssss.generatedOutFromFunction(secret*5)
+result3 = ssss.generatedOutFromFunction(secret*1)
 
-#summed=result1+result2+result3 
+summed=result1+result2+result3 
 
-#result=ssss.getSecret(summed)
+result=ssss.getSecret(summed)
 
-#print(result)
+print(result)
 
             

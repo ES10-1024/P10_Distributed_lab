@@ -11,7 +11,7 @@ from low_level_settings import settings_pump1
 from low_level_control import low_level_controller
 
 use_low_level_ctrl = True
-use_high_level_ctrl = True
+use_high_level_ctrl = False
 
 
 if __name__ == '__main__':
@@ -65,7 +65,7 @@ if __name__ == '__main__':
             print(U)
             flow_pump = U[1]
         else:
-            flow_pump =  random.randrange(0,0.3,0.01)
+            flow_pump =  random.uniform(0,0.3)
 
         if(use_low_level_ctrl==True):
             ll_reference_queue.put(flow_pump)   #Send command to low level controller

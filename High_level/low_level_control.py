@@ -14,6 +14,7 @@ def low_level_controller(settings, refrence_queue):
     MB_pump = ModbusClient(host = settings['ip_pump'], port = 502, auto_open=True)
     MB_tower = ModbusClient(host = settings['ip_tower'], port = 502, auto_open = True)
 
+    #try:
     while True:
         sleep_time = last_sample_time + settings['sampletime']  - time.time()
         time.sleep(sleep_time)
@@ -59,7 +60,15 @@ def low_level_controller(settings, refrence_queue):
                 pump_percentage = PI_output
                 print("Pump", pump_percentage)
         
-            MB_pump.write_single_register(settings['register_pump'], int(100*pump_percentage)) 
+            MB_pump.write_single_register(settings['register_pump'], int(100*pump_percentage))
+
+'''
+    #except Exception as error:
+        print("Low level error:")
+        print(error)
+        MB_pump.write_single_register(settings['register_pump'], int(0))
+        print("Low level controller have turned off pump due to above error")
+'''
 
 
 

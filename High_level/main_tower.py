@@ -11,7 +11,7 @@ from low_level_settings import settings_pump2
 from low_level_control import low_level_controller
 
 use_low_level_ctrl = True
-use_high_level_ctrl = True
+use_high_level_ctrl = False
 
 if(use_low_level_ctrl==True):
         MB_tower = ModbusClient(host = settings_pump2['ip_tower'], port = 502, auto_open = True)    #Connection to read water level in tower

@@ -94,12 +94,15 @@ class ADMM_optimiser_WDN:
                 self.x_bar =self.summedSecretX/self.N_s
                 
                 #self.x_bar = 1/self.N_s*(self.x_i + self.x_2 + self.x_3)
-                #Determine r 
-                self.secretR=np.linalg.norm(self.x_i - self.x_bar, 2)**2 
+                #Determine r #PROBLEM SSSSS ER IKKE LAVET TIL AT DER KUN HAVES EN SKALAR DETTE SKAL DER SES PÅ!
+                self.secretR=np.array([np.linalg.norm(self.x_i - self.x_bar, 2)**2])
+                print("Shape of secret:", self.secretR.shape) 
+                
+                
                 self.r_norm_squared=ssss_instance.DoSSSS(self.secretR) 
                 
                 #self.r_norm_squared =  np.linalg.norm(self.x_i - self.x_bar, 2)**2 + np.linalg.norm(self.x_2 - self.x_bar, 2)**2 + np.linalg.norm(self.x_3 - self.x_bar, 2)**2
-                #self.s_norm = self.N_s*self.rho**2*np.linalg.norm(self.x_bar - self.x_bar_old,2)
+                self.s_norm = self.N_s*self.rho**2*np.linalg.norm(self.x_bar - self.x_bar_old,2)
 
                 if(np.sqrt(self.r_norm_squared)>self.mu*self.s_norm):
                     self.rho = self.rho * self.tau

@@ -20,7 +20,8 @@ class SSSS:
     #Hidding the secret in second degrees polyniums  
     def generatedOutFromFunction(self, secret): 
         # Predefining a few matrices
-        b = np.zeros((3, self.N_q * self.N_c))
+        rowNumber=secret.shape[0]
+        b = np.zeros((3, rowNumber))
         
         # Going through each entry in the vector, scaling it and hiding it as described in SSSS 
         for index, element in enumerate(secret):
@@ -49,9 +50,9 @@ class SSSS:
     
     def DoSSSS(self,secret): 
         #Defining a few matrix for start. 
-        b1=np.zeros((1,self.N_c*self.N_q))
-        b2=np.zeros((1,self.N_c*self.N_q))
-        b3=np.zeros((1,self.N_c*self.N_q))
+        #b1=np.zeros((1,self.N_c*self.N_q))
+        #b2=np.zeros((1,self.N_c*self.N_q))
+        #b3=np.zeros((1,self.N_c*self.N_q))
         #Starting by masking the secret by using a second degree polynium 
         maskedSecret=self.generatedOutFromFunction(secret)
         if self.stakeholder==1:  #Water tower ID 1
@@ -67,8 +68,8 @@ class SSSS:
              self.conn2.sendall(b1x3.tobytes())
              
              #Reciving from the others: 
-             b2x1 = np.frombuffer(self.conn1.recv(8*self.N_c*self.N_q), dtype=b1.dtype) #Recive other z_i's
-             b3x1 = np.frombuffer(self.conn2.recv(8*self.N_c*self.N_q), dtype=b1.dtype)
+             b2x1 = np.frombuffer(self.conn1.recv(8*self.N_c*self.N_q), dtype=b1x1.dtype) #Recive other z_i's
+             b3x1 = np.frombuffer(self.conn2.recv(8*self.N_c*self.N_q), dtype=b1x1.dtype)
              #Reshaping the recevied data 
              b1x1= b1x1.reshape(-1, 1)
              b2x1= b2x1.reshape(-1, 1)
@@ -100,8 +101,8 @@ class SSSS:
              self.conn1.sendall(b2x1.tobytes())  
              self.conn2.sendall(b2x3.tobytes())
              #Reciving from the others: 
-             b1x2 = np.frombuffer(self.conn1.recv(8*self.N_c*self.N_q), dtype=b2.dtype) #Recive other z_i's
-             b3x2 = np.frombuffer(self.conn2.recv(8*self.N_c*self.N_q), dtype=b2.dtype)
+             b1x2 = np.frombuffer(self.conn1.recv(8*self.N_c*self.N_q), dtype=b2x1.dtype) #Recive other z_i's
+             b3x2 = np.frombuffer(self.conn2.recv(8*self.N_c*self.N_q), dtype=b2x1.dtype)
              #Reshaping the recevied data 
              b1x2= b1x2.reshape(-1, 1)
              b2x2= b2x2.reshape(-1, 1)
@@ -133,8 +134,8 @@ class SSSS:
                  self.conn2.sendall(b3x2.tobytes())
                 
                  # Receiving from the others: 
-                 b1x3 = np.frombuffer(self.conn1.recv(8*self.N_c*self.N_q), dtype=b3.dtype) # Receive other z_i's
-                 b2x3 = np.frombuffer(self.conn2.recv(8*self.N_c*self.N_q), dtype=b3.dtype)
+                 b1x3 = np.frombuffer(self.conn1.recv(8*self.N_c*self.N_q), dtype=b3x1.dtype) # Receive other z_i's
+                 b2x3 = np.frombuffer(self.conn2.recv(8*self.N_c*self.N_q), dtype=b3x1.dtype)
                 
                  # Reshaping the received data 
                  b1x3 = b1x3.reshape(-1, 1)

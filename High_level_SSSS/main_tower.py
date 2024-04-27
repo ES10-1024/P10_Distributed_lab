@@ -33,12 +33,12 @@ last_sample_time = 0 #time.time() #unix time
 #Setting the hour we start working with
 hour = 1
 
-secret=np.ones((48,1))*2.5 
-ssss_instance = SSSS(conn1=conn_pump1, conn2=conn_pump2,stakeholder=1)
-summedSecret=ssss_instance.DoSSSS(secret) 
-print(summedSecret)
+#secret=np.ones((48,1))*2.5 
+#ssss_instance = SSSS(conn1=conn_pump1, conn2=conn_pump2,stakeholder=1)
+#summedSecret=ssss_instance.DoSSSS(secret) 
+#print(summedSecret)
 
-time.sleep(1000)
+#time.sleep(1000)
 
 
 

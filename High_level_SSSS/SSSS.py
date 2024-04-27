@@ -1,6 +1,9 @@
 import numpy as np
 import random
 
+                #Determine r #PROBLEM SSSSS ER IKKE LAVET TIL AT DER KUN HAVES EN SKALAR DETTE SKAL DER SES PÅ!
+
+
 class SSSS: 
     def __init__(self,conn1,conn2, stakeholder: int):
         self.conn1 = conn1      #TCP connection

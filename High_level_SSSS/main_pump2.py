@@ -33,12 +33,12 @@ if __name__ == '__main__':
     hour = 1
     
     
-    secret=np.ones((48,1))*5.1
-    ssss_instance = SSSS(conn1=s_tower, conn2=s_pump1,stakeholder=3)
-    summedSecret=ssss_instance.DoSSSS(secret) 
-    print(summedSecret)
+    #secret=np.ones((48,1))*(-0.5)
+    #ssss_instance = SSSS(conn1=s_tower, conn2=s_pump1,stakeholder=3)
+    #summedSecret=ssss_instance.DoSSSS(secret) 
+    #print(summedSecret)
 
-    time.sleep(1000)
+    #time.sleep(1000)
 
     while True:
             #Determine the time to next sample, and sleeping if time remains

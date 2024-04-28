@@ -73,7 +73,7 @@ class ADMM_optimiser_WDN:
             self.lambda_i = self.lambda_i -1/(self.N_s + 1)*(self.lambda_i - self.lambda_i_tilde) 
             
             ### END ADMM 
-            
+            print("rho er:", self.rho) 
             ### BEGIN find rho
             if(k<=self.N_vary_rho):
                 #Determining sum of xi based on SSSS m 
@@ -113,4 +113,5 @@ class ADMM_optimiser_WDN:
             
        # print("x_bar SSSS:", self.x_barSSSS) 
        # print("x_bar:", self.x_bar)
+        
         return self.x_i[:2]       #Return actuation commands

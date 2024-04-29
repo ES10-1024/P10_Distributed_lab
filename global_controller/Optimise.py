@@ -30,7 +30,7 @@ def performOptimisation(time, h):
     #Define constraints
     opti.subject_to(A @ U_k <= b)
     #Choose solver
-    opti.solver('ipopt')
+    opti.solver('sqpmethod')
     #Solve
     sol = opti.solve()
     #Print solution

@@ -1,47 +1,61 @@
+import time
 import socket
 import numpy as np
-import time
+import multiprocessing
+from pyModbusTCP.client import ModbusClient
+import random
+
 from functions import ADMM_optimiser_WDN
 from constants import c_general
+from low_level_settings import settings_pump2
+from low_level_control import low_level_controller
+
+use_low_level_ctrl = True
+use_high_level_ctrl = False
+
+if(use_low_level_ctrl==True):
+        MB_tower = ModbusClient(host = settings_pump2['ip_tower'], port = 502, auto_open = True)    #Connection to read water level in tower
+      
+
+if(use_high_level_ctrl):
+        tower_IP = '192.168.100.32'
+        tower_IP = "127.0.0.1"
+        port_pump1 = 5400
+        port_pump2 = 5401
+        s_pump1= socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s_pump1.bind((tower_IP, port_pump1))
+        s_pump2= socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s_pump2.bind((tower_IP, port_pump2))
+        print("Binded to both pumps")
+
+        s_pump1.listen()
+        conn_pump1, addr_pump1 = s_pump1.accept()
+        print("Connected to pump 1")
+
+        s_pump2.listen()
+        conn_pump2, addr_pump2 = s_pump2.accept()
+        print("Connected to pump 2, all TCP connections setup")
 
 
-tower_IP = '192.168.100.32'
-tower_IP = "127.0.0.1"
-port_pump1 = 5400
-port_pump2 = 5401
+        optimiser = ADMM_optimiser_WDN(conn_pump1, conn_pump2,125, 10, 1)
 
+simulated_hour = 1
+last_sample_time = 0 
 
-s_pump1= socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s_pump1.bind((tower_IP, port_pump1))
-s_pump2= socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s_pump2.bind((tower_IP, port_pump2))
-print("Binded to both pumps")
-
-s_pump1.listen()
-conn_pump1, addr_pump1 = s_pump1.accept()
-print("Connected to pump 1")
-
-s_pump2.listen()
-conn_pump2, addr_pump2 = s_pump2.accept()
-print("Connected to pump 2, all TCP connections setup")
-
-#Loading in the classe, 125=iterations, 10=iterations with changing rho, 1=stakeholder number
-optimiser = ADMM_optimiser_WDN(conn_pump1, conn_pump2,125, 10, 1)
-#setting time since last sample if 0, used determining input now, if time.time() waits the sample time
-last_sample_time = 0 #time.time() #unix time 
-#Setting the hour we start working with
-hour = 1
 while True:
-        #Determine the time to next sample, and sleeping if time remains
+        if(use_low_level_ctrl==True):
+              tower_tank_level = MB_tower.read_input_registers(settings_pump2['register_tower_tank'], 1)[0]     #Read water level in tower [mm]
+        else:
+             tower_tank_level = 200
+
+        if(use_high_level_ctrl==True):
+            U=optimiser.optimise(simulated_hour, tower_tank_level) #Calculated actuation
+            print(U)
+
         sleep_time = last_sample_time + c_general["t_s"] - time.time()
+        last_sample_time = time.time()      
         if sleep_time>0:  
-                time.sleep(sleep_time)
-        last_sample_time = time.time()      #unix time 
-        #Perform high level control
-        water_level = 300
-        U=optimiser.optimise(hour, water_level)
-        print(U)
-        #Another hour has gone by
-        hour=hour+1 
+            time.sleep(sleep_time)
+        simulated_hour = simulated_hour + 1
 
 

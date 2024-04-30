@@ -11,7 +11,9 @@ from low_level_settings import settings_pump2
 from low_level_control import low_level_controller
 
 use_low_level_ctrl = True
-use_high_level_ctrl = False
+use_high_level_ctrl = True
+
+print("Halow world")
 
 if(use_low_level_ctrl==True):
         MB_tower = ModbusClient(host = settings_pump2['ip_tower'], port = 502, auto_open = True)    #Connection to read water level in tower
@@ -40,7 +42,7 @@ if(use_high_level_ctrl):
         optimiser = ADMM_optimiser_WDN(conn_pump1, conn_pump2,125, 10, 1)
 
 simulated_hour = 1
-last_sample_time = 0 
+last_sample_time = time.time()
 
 while True:
         if(use_low_level_ctrl==True):

@@ -51,7 +51,7 @@ if __name__ == '__main__':
         last_sample_time =0 #time.time() #unix time 
     
     simulated_hour = 1
-    last_sample_time = 0
+    last_sample_time = time.time()
 
     while True:
 
@@ -63,7 +63,7 @@ if __name__ == '__main__':
         if(use_high_level_ctrl==True):
             U=optimiser.optimise(simulated_hour, tower_tank_level) #Calculated actuation
             print(U)
-            flow_pump = U[1]
+            flow_pump = U[0]
         else:
             flow_pump =  random.uniform(0,0.3)
 

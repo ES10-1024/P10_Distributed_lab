@@ -11,7 +11,7 @@ from low_level_settings import settings_pump2
 from low_level_control import low_level_controller
 
 use_low_level_ctrl = True
-use_high_level_ctrl = False
+use_high_level_ctrl = True
 
 
 
@@ -47,7 +47,7 @@ if __name__ == '__main__':
         optimiser = ADMM_optimiser_WDN(s_tower, s_pump1,125, 10, 3)
     
     simulated_hour = 1
-    last_sample_time = 0
+    last_sample_time = time.time()
 
     while True:
 
@@ -59,7 +59,7 @@ if __name__ == '__main__':
         if(use_high_level_ctrl==True):
             U=optimiser.optimise(simulated_hour, tower_tank_level) #Calculated actuation
             print(U)
-            flow_pump = U[2]
+            flow_pump = U[1]
         else:
             flow_pump =  random.uniform(0,0.3)
 

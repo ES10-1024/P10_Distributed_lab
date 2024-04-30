@@ -1,5 +1,7 @@
 import numpy as np
 import random
+from logging import logging 
+
 
                 #Determine r #PROBLEM SSSSS ER IKKE LAVET TIL AT DER KUN HAVES EN SKALAR DETTE SKAL DER SES PÅ!
                 #C++ style guideline
@@ -7,10 +9,10 @@ import random
 
 
 class SSSS: 
-    def __init__(self,conn1,conn2, stakeholder: int):
+    def __init__(self,conn1,conn2, stakeholder: int,log ):
         self.conn1 = conn1      #TCP connection
         self.conn2 = conn2      #TCP connection
-        
+        self.log = log 
         self.offset = 1 #Offset to avoid negative values  
         self.scaling = 10000 #Scaling such rounding becomes insignificant
         self.N_c = 24   #Control horizon
@@ -78,7 +80,9 @@ class SSSS:
              b3x1= b3x1.reshape(-1, 1)
              # Adding the Recived up and sending it out: 
              b1=b1x1+b2x1+b3x1
-             print("b1",b1.shape)
+             data=["b1",b1.shape]
+             self.log.write_data(data)
+             
              self.conn1.sendall(b1.tobytes())  
              self.conn2.sendall(b1.tobytes())
              #Reciving b2 and b3 
@@ -111,7 +115,9 @@ class SSSS:
              b3x2= b3x2.reshape(-1, 1)
              # Adding the Recived up and sending it out: 
              b2=b1x2+b2x2+b3x2
-             print("b2",b2.shape) 
+             data=["b2",b2.shape]
+             self.log.write_data(data)
+              
              self.conn1.sendall(b2.tobytes())  
              self.conn2.sendall(b2.tobytes())
              #Reciving b1 and b3 
@@ -143,12 +149,11 @@ class SSSS:
                  b1x3 = b1x3.reshape(-1, 1)
                  b2x3 = b2x3.reshape(-1, 1)
                  b3x3 = b3x3.reshape(-1, 1)
-                 print("Shape of b1x3:", b1x3.shape)
-                 print("Shape of b2x3:", b2x3.shape)
-                 print("Shape of b3x3:", b3x3.shape)
+
                  # Adding the received up and sending it out: 
                  b3 = b1x3 + b2x3 + b3x3 
-                 print("b3",b3.shape)
+                 data=["b3",b3.shape]
+                 self.log.write_data(data)
 
                  self.conn1.sendall(b3.tobytes())  
                  self.conn2.sendall(b3.tobytes())
@@ -168,6 +173,8 @@ class SSSS:
         bstacked=np.vstack((b1.T,b2.T,b3.T))
         #Getting out the secret value: 
         summedSecret=self.getSecret(bstacked)
+        data=["secret",summedSecret]
+        self.log.write_data(data)
         
         return  summedSecret
     

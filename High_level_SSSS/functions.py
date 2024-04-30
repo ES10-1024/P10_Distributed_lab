@@ -1,6 +1,8 @@
 import numpy as np
 from Solve_each_ADMM import performOptimisation
 from SSSS import SSSS
+from logging import logging 
+
 
 
 
@@ -9,9 +11,10 @@ from SSSS import SSSS
 #     return x_i
 
 class ADMM_optimiser_WDN:
-    def __init__(self, conn1, conn2, N_iterations : int,  N_vary_rho: int, stakeholder: int):
+    def __init__(self, conn1, conn2, N_iterations : int,  N_vary_rho: int, stakeholder: int,log=None):
         self.conn1 = conn1      #TCP connection
         self.conn2 = conn2      #TCP connection
+        self.log = log
         self.N_vary_rho = N_vary_rho        #Number of iterations with varying rho
         self.stakeholder = stakeholder      #My stakeholder id
         self.N_iterations = N_iterations    #Number of ADMM iterations
@@ -24,14 +27,16 @@ class ADMM_optimiser_WDN:
         self.tau = 2    #Vary rho algorithm parameter
 
         self.z=np.zeros((self.N_c*self.N_q,1)) #Initialization ADMM
+        
+        ssss_instance = SSSS(conn1=self.conn1, conn2=self.conn2,stakeholder=self.stakeholder,log=self.log) #Shamirs secret sharing initialisation
+
 
 
 
     def optimise(self, hour : int , water_height: float):
         self.lambda_i = np.zeros((self.N_c*self.N_q,1)) #ADMM Initialisation
         self.x_bar = np.zeros((self.N_c*self.N_q,1)) #ADMM Initialisation
-        ssss_instance = SSSS(conn1=self.conn1, conn2=self.conn2,stakeholder=self.stakeholder) #Shamirs secret sharing initialisation
-        #Why not int the __init__
+        ssss_instance = SSSS(conn1=self.conn1, conn2=self.conn2,stakeholder=self.stakeholder,log=self.log) #Shamirs secret sharing initialisation
         
         #Timeshift initial guess
         self.z = np.roll(self.z,1)
@@ -54,7 +59,7 @@ class ADMM_optimiser_WDN:
             #Determining z: 
             self.z_i = self.x_i + (1/self.rho)*self.lambda_i 
             #Doing SSSS to known the sum 
-            self.summedSecretZ=ssss_instance.DoSSSS(self.z_i) 
+            self.summedSecretZ=self.ssss_instance.DoSSSS(self.z_i) 
             #Dividing to determine z_tilde
             self.z_tilde=self.summedSecretZ/self.N_s
            # self.conn1.sendall(self.z_i.tobytes())  #Distribute z_i
@@ -78,7 +83,7 @@ class ADMM_optimiser_WDN:
             ### BEGIN find rho
             if(k<=self.N_vary_rho):
                 #Determining sum of xi based on SSSS m 
-                self.summedSecretX=ssss_instance.DoSSSS(self.x_i)   
+                self.summedSecretX=self.ssss_instance.DoSSSS(self.x_i)   
                       
                # self.conn1.sendall(self.x_i.tobytes())  #Distribute x_i for residual calculation 
                # self.conn2.sendall(self.x_i.tobytes())
@@ -100,7 +105,7 @@ class ADMM_optimiser_WDN:
                 print("Shape of secret:", self.secretR.shape) 
                 
                 
-                self.r_norm_squared=ssss_instance.DoSSSS(self.secretR) 
+                self.r_norm_squared=self.ssss_instance.DoSSSS(self.secretR) 
                 
                 #self.r_norm_squared =  np.linalg.norm(self.x_i - self.x_bar, 2)**2 + np.linalg.norm(self.x_2 - self.x_bar, 2)**2 + np.linalg.norm(self.x_3 - self.x_bar, 2)**2
                 self.s_norm = self.N_s*self.rho**2*np.linalg.norm(self.x_bar - self.x_bar_old,2)

@@ -22,7 +22,7 @@ class SSSS:
         self.stakeholder=stakeholder 
     
     #Hidding the secret in second degrees polyniums  
-    def generatedOutFromFunction(self, secret): 
+    def getShares(self, secret): 
         # Predefining a few matrices
         rowNumber=secret.shape[0]
         b = np.zeros((3, rowNumber))
@@ -58,7 +58,7 @@ class SSSS:
         #b2=np.zeros((1,self.N_c*self.N_q))
         #b3=np.zeros((1,self.N_c*self.N_q))
         #Starting by masking the secret by using a second degree polynium 
-        maskedSecret=self.generatedOutFromFunction(secret)
+        maskedSecret=self.getShares(secret)
         if self.stakeholder==1:  #Water tower ID 1
              #Distrubted row 2 and 3
              #conn1 = pump1 ID: 2

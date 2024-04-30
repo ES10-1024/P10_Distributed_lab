@@ -2,6 +2,8 @@ import numpy as np
 import random
 
                 #Determine r #PROBLEM SSSSS ER IKKE LAVET TIL AT DER KUN HAVES EN SKALAR DETTE SKAL DER SES PÅ!
+                #C++ style guideline
+                #https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#nl1-dont-say-in-comments-what-can-be-clearly-stated-in-code
 
 
 class SSSS: 
@@ -13,7 +15,7 @@ class SSSS:
         self.scaling = 10000 #Scaling such rounding becomes insignificant
         self.N_c = 24   #Control horizon
         self.N_q = 2    #number of pumps
-        self.Beta = 10000019 # Prime number used for SSSS 
+        self.Beta = 10000019 # Prime number used for SSSS    #Please do an int call to ensure integer type
         self.N_s = 3 #Number of stakeholders
         self.stakeholder=stakeholder 
     
@@ -26,7 +28,7 @@ class SSSS:
         # Going through each entry in the vector, scaling it and hiding it as described in SSSS 
         for index, element in enumerate(secret):
             #Offseting and rounding the secret 
-            scaledOffset= np.round(self.scaling * (secret[index] + self.offset))
+            scaledOffset= int( np.round(self.scaling * (secret[index] + self.offset)))        #Please do an int call to ensure integer type
             #Determing the variables for the second degree polynium 
             a1 = random.randint(0, self.Beta - 1)
             a2 = random.randint(0, self.Beta - 1)
@@ -159,7 +161,7 @@ class SSSS:
                  b1 = b1.reshape(-1, 1)
                  b2 = b2.reshape(-1, 1)
                  b3 = b3.reshape(-1, 1)
-# Assuming b1, b2, and b3 are NumPy arrays
+        # Assuming b1, b2, and b3 are NumPy arrays
         print("Shape of b1:", b1.shape)
         print("Shape of b2:", b2.shape)
         print("Shape of b3:", b3.shape)

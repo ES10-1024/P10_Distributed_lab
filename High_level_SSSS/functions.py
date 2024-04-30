@@ -31,6 +31,7 @@ class ADMM_optimiser_WDN:
         self.lambda_i = np.zeros((self.N_c*self.N_q,1)) #ADMM Initialisation
         self.x_bar = np.zeros((self.N_c*self.N_q,1)) #ADMM Initialisation
         ssss_instance = SSSS(conn1=self.conn1, conn2=self.conn2,stakeholder=self.stakeholder) #Shamirs secret sharing initialisation
+        #Why not int the __init__
         
         #Timeshift initial guess
         self.z = np.roll(self.z,1)

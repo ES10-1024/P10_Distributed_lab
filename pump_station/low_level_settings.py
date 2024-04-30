@@ -1,4 +1,4 @@
-settings_pump1 = {  #Module 41
+#settings_pump1 = {  #Module 41
     "sampletime":1,
     "proportional_gain":6.5,
     "integral_gain":3.5,
@@ -17,7 +17,7 @@ settings_pump1 = {  #Module 41
 }
 
 
-settings_pump2 = { #Module 43
+#settings_pump2 = { #Module 43
     "sampletime":1,
     "proportional_gain":16,
     "integral_gain":3,

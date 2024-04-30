@@ -36,7 +36,7 @@ c_general = {
     "N_q":2,                    #Number of pump stations
     "N_d":1,                    #Number of consumption groups
     "N_c":24,                   #Control horizon
-    "t_s":600,                   #Sample time [s]
+    "t_s":60,                   #Sample time [s]
     "acc_time":6,               #Number of accelerated hours in one real-life hour
     "condition_scaling":10000,  #Scaling variable for conditioning
     "hours_to_seconds":1/3600   #Use when going from m^3/h to m^3/s

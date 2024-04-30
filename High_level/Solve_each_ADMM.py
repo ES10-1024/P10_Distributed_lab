@@ -167,7 +167,10 @@ def performOptimisation(time, WaterHeightmm, stakeholderID,rho,Lambda,z):
     #Define constraints
     opti.subject_to(A @ U_k <= b)
     #Choose solver
-    opti.solver('ipopt')
+    p_opts = dict(print_time=False, verbose=False)
+    s_opts = dict(print_level=0)
+
+    opti.solver('ipopt', p_opts, s_opts)
     
     #Solve
     sol = opti.solve()
@@ -176,7 +179,7 @@ def performOptimisation(time, WaterHeightmm, stakeholderID,rho,Lambda,z):
     u_hat = np.round(u_hat, 4)
     #print('Predicted Demand:', d)
     #print('Electricity prices: ', J_e)
-    print('U: ', u_hat)
+    #print('U: ', u_hat)
     #print('Initial Volume: ', V_0)
 
     return u_hat

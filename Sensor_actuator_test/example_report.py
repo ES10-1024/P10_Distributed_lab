@@ -1,7 +1,7 @@
 from pyModbusTCP.client import ModbusClient
 import time
 
-ip_addr = '192.168.100.20'  #Module IP adress
+ip_addr = '192.168.100.42'  #Module IP adress
 
 MB = ModbusClient(host=ip_addr, port=502, auto_open=True)
 #Setup connection to module, 
@@ -12,7 +12,10 @@ else:
     print("Modbus not open")    #Some bug, e.g. ethernet
     quit()   #End script
 
-data = MB.read_input_registers(0,25)
+time.sleep(3)
+
+
+data = MB.read_input_registers(1,10)
 print(data)
 
 

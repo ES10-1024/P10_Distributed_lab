@@ -36,7 +36,7 @@ if __name__ == '__main__':
         s_tower.connect((tower_IP, port_tower_pump1))
         print("Connected to tower")
 
-        #Set up connecion to pump 2 as server
+        #Set up connection to pump 2 as server
         pump1_IP = '192.168.100.144'
         pump1_IP = "127.0.0.2"
         port_pump2 = 5402

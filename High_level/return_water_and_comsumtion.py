@@ -81,7 +81,7 @@ except:
     MB_pump2.write_single_register(9, 0)
 
     MB_cons.write_single_register(3,0)    #Close bottom valve 
-    MB_tower.write_single_register(3,0)    #Close bottom valve 
+    MB_tower.write_single_register(3,0)   #Close bottom valve 
   
     MB_cons.write_single_register(1,0)    #Open top valve
     MB_cons.write_single_register(2,0)    #Open top valve

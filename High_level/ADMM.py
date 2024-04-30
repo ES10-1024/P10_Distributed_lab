@@ -1,7 +1,11 @@
-#Trying to implement consensus ADMM 
-#Solve problem
-import numpy as np
+'''
+Author: Simon Johansen
 
+Script used top test performOptimisation function and make test implementation of ADMM
+'''
+
+
+import numpy as np
 from Solve_each_ADMM import performOptimisation
 
 

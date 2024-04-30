@@ -40,7 +40,6 @@ class ADMM_optimiser_WDN:
             #Solve local problem
             try: 
                 self.x_i = performOptimisation(hour, water_height, self.stakeholder,self.rho,self.lambda_i,self.z)
-                #Reshaping the result 
                 self.x_i= self.x_i.reshape(-1, 1)
             except:
                 self.x_i = 3/4*self.x_i + 1/4*self.z
@@ -54,9 +53,9 @@ class ADMM_optimiser_WDN:
 
             self.z_2 = np.frombuffer(self.conn1.recv(8*self.N_c*self.N_q), dtype=self.z_i.dtype) #Recive other z_i's
             self.z_3 = np.frombuffer(self.conn2.recv(8*self.N_c*self.N_q), dtype=self.z_i.dtype)
-            #Reshaping the recevied data 
             self.z_2= self.z_2.reshape(-1, 1)
             self.z_3= self.z_3.reshape(-1, 1)
+            
             #Determining ztilde and z 
             self.z_tilde = 1/self.N_s*(self.z_i + self.z_2+ self.z_3)
             if  self.under_relaxation == True: 

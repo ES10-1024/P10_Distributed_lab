@@ -35,10 +35,8 @@ class logging:
 #The following can be used to test the class             
 '''
 #Data to test the class 
-data = [
-    ['Pump 1',100],
-    ['Pump 2', 25],
-]
+test=np.ones((42,1))
+data=["secret",test]
 
 # Specify the filename
 filename = 'example.csv'
@@ -46,9 +44,6 @@ filename = 'example.csv'
 # Create an instance of CSVHandler
 log = logging(filename)
 
-# Write data to the CSV file
-for row in data:
-    log.write_data(row)
-
+log.write_data(data)
 print("Data has been written to the CSV file.")
-'''
+''' 

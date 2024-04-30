@@ -6,7 +6,7 @@ clc
 close all 
 %% Loading in data 
 % Specify the filename
-filename = 'main_tower_04-30_13-31-00.csv';
+filename = 'example.csv_04-30_14-04-37.csv';
 
 % Read the CSV file into a table
 data = readtable(filename, 'Delimiter', ',');
@@ -29,6 +29,9 @@ for index = 1:size(data, 1)
         vectorTemp = data.Data(index); 
         % Extract numeric values using regular expression
         numeric_values = regexp(vectorTemp, '\d+\.\d+', 'match');
+        if isempty(numeric_values{:})==1 
+             numeric_values = regexp(vectorTemp, '\d+\.\d?', 'match');
+        end 
         % Extract the nested cell array
         nested_cell_array = numeric_values{1};
         for i = 1:numel(nested_cell_array)

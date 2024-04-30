@@ -1,6 +1,8 @@
 import numpy as np
 from Solve_each_ADMM import performOptimisation
 from SSSS import SSSS
+from logging import logging 
+
 
 
 
@@ -9,9 +11,10 @@ from SSSS import SSSS
 #     return x_i
 
 class ADMM_optimiser_WDN:
-    def __init__(self, conn1, conn2, N_iterations : int,  N_vary_rho: int, stakeholder: int):
+    def __init__(self, conn1, conn2, N_iterations : int,  N_vary_rho: int, stakeholder: int,log=None):
         self.conn1 = conn1      #TCP connection
         self.conn2 = conn2      #TCP connection
+        self.log = log
         self.N_vary_rho = N_vary_rho        #Number of iterations with varying rho
         self.stakeholder = stakeholder      #My stakeholder id
         self.N_iterations = N_iterations    #Number of ADMM iterations
@@ -30,7 +33,7 @@ class ADMM_optimiser_WDN:
     def optimise(self, hour : int , water_height: float):
         self.lambda_i = np.zeros((self.N_c*self.N_q,1)) #ADMM Initialisation
         self.x_bar = np.zeros((self.N_c*self.N_q,1)) #ADMM Initialisation
-        ssss_instance = SSSS(conn1=self.conn1, conn2=self.conn2,stakeholder=self.stakeholder) #Shamirs secret sharing initialisation
+        ssss_instance = SSSS(conn1=self.conn1, conn2=self.conn2,stakeholder=self.stakeholder,log=self.log) #Shamirs secret sharing initialisation
         
         #Timeshift initial guess
         self.z = np.roll(self.z,1)

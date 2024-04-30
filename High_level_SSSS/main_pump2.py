@@ -4,6 +4,8 @@ import numpy as np
 from functions import ADMM_optimiser_WDN
 from constants import c_general
 from SSSS import SSSS
+from logging import logging 
+
 
 
 
@@ -24,9 +26,13 @@ if __name__ == '__main__':
     port_pump1_pump2 = 5402
     s_pump1= socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s_pump1.connect((pump1_IP,port_pump1_pump2))
+    #File name for logging 
+    filename="pump2" 
+    #Setting up logging: 
+    log=logging(filename) 
     print("Connected to pump 2, all TCP connecttions set up")
     #Loading in the classe, 125=iterations, 10=iterations with changing rho, 3=stakeholder number
-    optimiser = ADMM_optimiser_WDN(s_tower, s_pump1,125, 10, 3)
+    optimiser = ADMM_optimiser_WDN(s_tower, s_pump1,125, 10, 3,log)
     #setting time since last sample if 0, used determining input now, if time.time() waits the sample time
     last_sample_time = 0 #time.time() #unix time 
     #Setting the hour we start working with 

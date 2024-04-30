@@ -26,11 +26,11 @@ try:
         tank_pump1 = MB_pump1.read_input_registers(settings_pump1['register_pump_tank'], 1)[0]
         tank_pump2 = MB_pump2.read_input_registers(settings_pump2['register_pump_tank'], 1)[0]
 
-        MB_cons.write_single_register(3,10000)    #Open bootom valve
-        MB_tower.write_single_register(3,10000)    #Open bootom valve
+        MB_cons.write_single_register(3,10000)    #Open bottom valve
+        MB_tower.write_single_register(3,10000)    #Open bottom valve
 
-        #MB_cons.write_single_register(1,10000)    #Open bootom valve
-        #MB_cons.write_single_register(2,10000)    #Open bootom valve
+        #MB_cons.write_single_register(1,10000)    #Open top valve
+        #MB_cons.write_single_register(2,10000)    #Open top valve
 
 
         if(tank_consumer > tank_consumer_max):           #Set both aux pumps max power
@@ -53,9 +53,10 @@ try:
             MB_pump2.write_single_register(8, 0)
             MB_pump2.write_single_register(9, 0)
             print("Pump stations overfull")
+            #Bad but sufficient check. If one is overfull the flow is not stopped, before next switch time
 
         elif( tank_pump1 < tank_pump_ref or tank_pump2 < tank_pump_ref):
-            if(time.time() > last_turn_on_time + aux_pump_switch_time):     #if below refrence and long time since settings change
+            if(time.time() > last_turn_on_time + aux_pump_switch_time):     #if below reference and long time since settings change
                 last_turn_on_time= time.time()
                 if(tank_pump1 < tank_pump2):
                     MB_pump1.write_single_register(8, 100*100)
@@ -79,11 +80,11 @@ except:
     MB_pump2.write_single_register(8, 0)
     MB_pump2.write_single_register(9, 0)
 
-    MB_cons.write_single_register(3,0)    #Close bootom valve 
-    MB_tower.write_single_register(3,0)    #Close bootom valve 
+    MB_cons.write_single_register(3,0)    #Close bottom valve 
+    MB_tower.write_single_register(3,0)    #Close bottom valve 
   
-    MB_cons.write_single_register(1,0)    #Open bootom valve
-    MB_cons.write_single_register(2,0)    #Open bootom valve
+    MB_cons.write_single_register(1,0)    #Open top valve
+    MB_cons.write_single_register(2,0)    #Open top valve
 
     print("Pumps turned off, valves closed due to exception")
 

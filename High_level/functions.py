@@ -16,9 +16,10 @@ class ADMM_optimiser_WDN:
         self.N_c = 24   #Control horizon
         self.N_s = 3    #Number of stakeholders
         self.N_q = 2    #number of pumps
+        self.under_relaxation=False # Using under relaxation
         
-        self.rho = 4    #Initial
-        self.mu = 10    #Vary rho algorithm parameter
+        self.rho = 1    #Initial
+        self.mu = 5#10    #Vary rho algorithm parameter
         self.tau = 2    #Vary rho algorithm parameter
 
         self.z=np.zeros((self.N_c*self.N_q,1)) #Initialization ADMM
@@ -58,11 +59,18 @@ class ADMM_optimiser_WDN:
             self.z_3= self.z_3.reshape(-1, 1)
             #Determining ztilde and z 
             self.z_tilde = 1/self.N_s*(self.z_i + self.z_2+ self.z_3)
-            self.z = self.z - 1/(self.N_s + 1)*(self.z - self.z_tilde)   
+            if  self.under_relaxation == True: 
+                self.z = self.z - 1/(self.N_s + 1)*(self.z - self.z_tilde)   
+            else:
+                self.z = self.z_tilde 
+                
             
             #Determining lambda: 
-            self.lambda_i_tilde = self.lambda_i + self.rho*(self.x_i - self.z)         
-            self.lambda_i = self.lambda_i -1/(self.N_s + 1)*(self.lambda_i - self.lambda_i_tilde) 
+            self.lambda_i_tilde = self.lambda_i + self.rho*(self.x_i - self.z)   
+            if self.under_relaxation == True: 
+                 self.lambda_i = self.lambda_i -1/(self.N_s + 1)*(self.lambda_i - self.lambda_i_tilde) 
+            else: 
+                self.lambda_i = self.lambda_i_tilde       
             
             ### END ADMM 
             
@@ -73,6 +81,9 @@ class ADMM_optimiser_WDN:
 
                 self.x_2 = np.frombuffer(self.conn1.recv(8*self.N_c*self.N_q), dtype= self.x_i.dtype) #Recive x_i's for reidual calculation
                 self.x_3 = np.frombuffer(self.conn2.recv(8*self.N_c*self.N_q), dtype= self.x_i.dtype)
+                self.x_2=self.x_2.reshape(-1, 1)
+                self.x_3=self.x_3.reshape(-1, 1)
+
 
                 self.x_bar_old = self.x_bar
                 self.x_bar = 1/self.N_s*(self.x_i + self.x_2 + self.x_3)

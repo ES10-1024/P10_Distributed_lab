@@ -47,7 +47,7 @@ if __name__ == '__main__':
         optimiser = ADMM_optimiser_WDN(s_tower, s_pump1,125, 10, 3)
     
     simulated_hour = 1
-    last_sample_time = time.time()
+    current_sample_time = time.time()
 
     while True:
 
@@ -59,15 +59,16 @@ if __name__ == '__main__':
         if(use_high_level_ctrl==True):
             U=optimiser.optimise(simulated_hour, tower_tank_level) #Calculated actuation
             print(U)
-            flow_pump = U[1]
+            flow_pump = U.item(1)
         else:
             flow_pump =  random.uniform(0,0.3)
 
         if(use_low_level_ctrl==True):
             ll_reference_queue.put(flow_pump)   #Send command to low level controller
 
-        sleep_time = last_sample_time + c_general["t_s"] - time.time()
-        last_sample_time = time.time()      
+        next_sample_time  = current_sample_time + c_general["t_s"]     
+        sleep_time = next_sample_time - time.time()
         if sleep_time>0:  
             time.sleep(sleep_time)
         simulated_hour = simulated_hour + 1
+        current_sample_time = time.time()

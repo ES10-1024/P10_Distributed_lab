@@ -42,7 +42,7 @@ if(use_high_level_ctrl):
         optimiser = ADMM_optimiser_WDN(conn_pump1, conn_pump2,125, 10, 1)
 
 simulated_hour = 1
-last_sample_time = time.time()
+current_sample_time = time.time()
 
 while True:
         if(use_low_level_ctrl==True):
@@ -54,10 +54,11 @@ while True:
             U=optimiser.optimise(simulated_hour, tower_tank_level) #Calculated actuation
             print(U)
 
-        sleep_time = last_sample_time + c_general["t_s"] - time.time()
-        last_sample_time = time.time()      
+        next_sample_time  = current_sample_time + c_general["t_s"]     
+        sleep_time = next_sample_time - time.time()
         if sleep_time>0:  
             time.sleep(sleep_time)
         simulated_hour = simulated_hour + 1
+        current_sample_time = time.time()
 
 

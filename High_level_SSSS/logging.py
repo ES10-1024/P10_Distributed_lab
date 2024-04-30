@@ -36,13 +36,9 @@ class logging:
 '''
 #Data to test the class 
 data = [
-    ['John', 30, 'New York'],
-    ['Alice', 25, 'Los Angeles'],
-    ['Bob', 35, 'Chicago']
+    ['Pump 1',100],
+    ['Pump 2', 25],
 ]
-
-# Define the header
-header = ['Name', 'Age', 'City']
 
 # Specify the filename
 filename = 'example.csv'

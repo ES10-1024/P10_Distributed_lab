@@ -44,7 +44,7 @@ data = [
 filename = 'example.csv'
 
 # Create an instance of CSVHandler
-log = logging(filename,header)
+log = logging(filename)
 
 # Write data to the CSV file
 for row in data:

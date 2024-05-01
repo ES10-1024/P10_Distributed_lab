@@ -25,6 +25,8 @@ class logging:
                     csv_writer = csv.writer(csv_file)
                     csv_writer.writerow(self.header)
                     csv_writer.writerow([])
+                    data=['start',0,time.time()]
+                    csv_writer.writerow(data)
                     
      # Writing data to the class              
     def write_data(self, ID, data):

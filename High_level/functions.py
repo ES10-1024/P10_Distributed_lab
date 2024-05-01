@@ -98,3 +98,49 @@ class ADMM_optimiser_WDN:
             
             
         return self.x_i[:2]       #Return actuation commands
+    
+
+
+class consumer_valve_controller:
+
+    def __init__(self, flow_register):
+        self.reference = 0
+        self.flow_reg = flow_register
+        self.kp = 40
+        self.ki = 20
+        self.saturation_upper = 100
+        self.saturation_lower = 0 
+        self.sampletime = 1
+        self.integral = 0  
+
+    def consumption_PI(self, ref):
+
+        self.reference = ref
+        #REMARK! Check whether "scaling" is the same here as for pumps
+        flow = 0.06/100*MB_cons.read_input_registers(self.flow_reg, 1)[0]
+        
+        error = self.reference - flow
+        self.integral = self.integral + error*self.sampletime
+
+        #Prevention of integral windup
+        if(self.integral*self.ki > self.saturation_lower):
+            self.integral = self.saturation_upper/self.ki
+            print("Integral saturated")
+
+        if(self.integral*self.ki < self.saturation_lower):
+            self.integral = self.saturation_lower/self.ki
+
+        #
+        PI_output = self.kp*error + self.ki*self.integral
+
+        #Ensure that the saturation limits aren't breached
+        if(PI_output>self.saturation_upper):
+            opening_degree = self.saturation_upper
+            print("Controller saturated")
+        elif(PI_output < self.saturation_lower):
+            opening_degree = self.saturation_lower
+            print("Controller saturated")
+        else:
+            opening_degree = PI_output
+        
+        return opening_degree

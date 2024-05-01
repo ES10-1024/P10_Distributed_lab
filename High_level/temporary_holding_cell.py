@@ -1,5 +1,6 @@
 from pyModbusTCP.client import ModbusClient
 from low_level_settings import *
+from functions import consumer_valve_controller
 import time
 import scipy.io
 
@@ -8,51 +9,13 @@ MB_pump1 = ModbusClient(host = settings_pump1['ip_pump'], port = 502, auto_open=
 MB_pump2 = ModbusClient(host = settings_pump2['ip_pump'], port = 502, auto_open=True)
 MB_cons = ModbusClient(host= settings_consumer['ip_consumer'], port= 502, auto_open= True)
 
+valve1 = consumer_valve_controller(settings_consumer['register_flow1']) 
+valve2 = consumer_valve_controller(settings_consumer['register_flow2']) 
+
 demand_temp = scipy.io.loadmat('ADMM_controller/Data/average_scaled_consumption.mat')
 demand_vector = demand_temp['average_scaled_consumption']
 
-class consumer_valve_controller:
 
-    def __init__(self, ref, flow_register):
-        self.reference = ref
-        self.flow_reg = flow_register
-        self.kp = 40
-        self.ki = 20
-        self.saturation_upper = 100
-        self.saturation_lower = 0 
-        self.sampletime = 1
-        self.integral = 0  
-
-    def consumption_PI(self):
-
-        #REMARK! Check whether "scaling" is the same here as for pumps
-        flow = 0.06/100*MB_cons.read_input_registers(self.flow_reg, 1)[0]
-        
-        error = self.reference - flow
-        self.integral = self.integral + error*self.sampletime
-
-        #Prevention of integral windup
-        if(self.integral*self.ki > self.saturation_lower):
-            self.integral = self.saturation_upper/self.ki
-            print("Integral saturated")
-
-        if(self.integral*self.ki < self.saturation_lower):
-            self.integral = self.saturation_lower/self.ki
-
-        #
-        PI_output = self.kp*error + self.ki*self.integral
-
-        #Ensure that the saturation limits aren't breached
-        if(PI_output>self.saturation_upper):
-            opening_degree = self.saturation_upper
-            print("Controller saturated")
-        elif(PI_output < self.saturation_lower):
-            opening_degree = self.saturation_lower
-            print("Controller saturated")
-        else:
-            opening_degree = PI_output
-        
-        return opening_degree
 
 tank_tower_min = 75
 tank_pump_max = 530 #[mm]
@@ -118,28 +81,25 @@ try:
         #PID controller for consumer unit
         demand_ref = demand_vector[simulated_hour]
 
-        consumer_tank_level = MB_cons.read_input_registers(settings_consumer['register_tank'],1)[0]
         tower_tank_level = MB_tower.read_input_registers(settings_pump1['register_tower_tank'], 1)[0]
-
-        valve_control = consumer_valve_controller()
+        
+        flow_valve1 = 0.06/100*MB_cons.read_input_registers(settings_consumer['register_flow1'], 1)[0]
+        flow_valve2 = 0.06/100*MB_cons.read_input_registers(settings_consumer['register_flow2'], 1)[0]
 
         #Safety control, close valves if the consumer is too full or the tower too empty. Otherwise, initiate control
-        if(consumer_tank_level > settings_consumer['tank_min'] or tower_tank_level < tank_tower_min):
+        if(tank_consumer > settings_consumer['tank_max'] or tower_tank_level < tank_tower_min):
             MB_cons.write_single_register(settings_consumer['register_valve1'], 0)     
             MB_cons.write_single_register(settings_consumer['register_valve2'], 0)     
             print("Safety level control active")
         else:
             #Determine whether one or two valves should be operating based on a switching limit
             if(demand_ref > settings_consumer['switching_limit']):
-                valve1 = consumer_valve_controller(demand_ref/2, settings_consumer['register_flow1']) 
-                valve2 = consumer_valve_controller(demand_ref/2, settings_consumer['register_flow2']) 
+                OD_valve1 = valve1.consumption_PI(demand_ref/2, flow_valve1)
+                OD_valve2 = valve2.consumption_PI(demand_ref/2, flow_valve2)
             else:
-                valve1 = consumer_valve_controller(demand_ref, settings_consumer['register_flow1']) 
-                valve2 = consumer_valve_controller(0, settings_consumer['register_flow2'])
+                OD_valve1 = valve1.consumption_PI(demand_ref, flow_valve1)
+                OD_valve2 = valve2.consumption_PI(0, flow_valve2)
             
-            #Perform control
-            OD_valve1 = valve1.consumption_PI()
-            OD_valve2 = valve2.consumption_PI()
             
             #Write to the registers
             MB_cons.write_single_register(settings_consumer['register_valve1'], int(100*OD_valve1))

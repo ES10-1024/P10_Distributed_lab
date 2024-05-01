@@ -16,7 +16,7 @@ class ADMM_optimiser_WDN:
         
         self.rho = 1    #Initial
         self.mu = 5#10    #Vary rho algorithm parameter
-        self.tau = 2    #Vary rho algorithm parameter
+        self.tau = 1.5    #Vary rho algorithm parameter
 
         self.z=np.zeros((self.N_c*self.N_q,1)) #Initialization ADMM
 

@@ -28,7 +28,7 @@ c_tower = {
     "A_t":0.283,                #Water surface area in tower [m^2]
     "rho_w":997,                #Density of water [kg/m^3]
     "g_0":9.82,                 #Gravitational acceleration [m/s^2]
-    "kappa":900                 #Volume cost
+    "kappa":0#900                 #Volume cost
 }
 
 c_general = {

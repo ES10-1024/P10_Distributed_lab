@@ -46,6 +46,6 @@ def performOptimisation(time, h):
 
     # Optimization
     result = minimize(cost, Uc, constraints = const, method = 'trust-constr', options={'disp': True})
-    result2 = minimize(cost, Uc, constraints = const, method = 'SLSQP', options={'disp': True})
-    return result, result2
+    return result
+
 

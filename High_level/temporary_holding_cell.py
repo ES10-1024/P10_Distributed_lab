@@ -3,18 +3,19 @@ from low_level_settings import *
 from functions import consumer_valve_controller
 import time
 import scipy.io
+from constants import c_general
+from math import floor as math_floor
 
 MB_tower = ModbusClient(host = settings_pump2['ip_tower'], port = 502, auto_open = True)    #Connection to read water level in tower
 MB_pump1 = ModbusClient(host = settings_pump1['ip_pump'], port = 502, auto_open=True)
 MB_pump2 = ModbusClient(host = settings_pump2['ip_pump'], port = 502, auto_open=True)
 MB_cons = ModbusClient(host= settings_consumer['ip_consumer'], port= 502, auto_open= True)
 
-valve1 = consumer_valve_controller(settings_consumer['register_flow1']) 
-valve2 = consumer_valve_controller(settings_consumer['register_flow2']) 
+valve1_ctrl = consumer_valve_controller(settings_consumer['register_flow1']) 
+valve2_ctrl = consumer_valve_controller(settings_consumer['register_flow2']) 
 
 demand_temp = scipy.io.loadmat('ADMM_controller/Data/average_scaled_consumption.mat')
 demand_vector = demand_temp['average_scaled_consumption']
-
 
 
 tank_tower_min = 75
@@ -26,6 +27,7 @@ aux_pump_switch_time = 60 # [s]
 last_turn_on_time = time.time()
 
 last_sample_time = time.time()
+start_time = time.time()
 
 try:
     while True: 
@@ -37,9 +39,6 @@ try:
         MB_cons.write_single_register(3,10000)    #Open bootom valve
         MB_tower.write_single_register(3,10000)   #Open bootom valve
 
-        #MB_cons.write_single_register(1,10000)    #Open bootom valve
-        #MB_cons.write_single_register(2,10000)    #Open bootom valve
-
 
         if(tank_consumer > tank_consumer_max):           #Set both aux pumps max power
             MB_pump1.write_single_register(8, 100*100)
@@ -48,7 +47,7 @@ try:
             MB_pump2.write_single_register(9, 100*100)
             print("Consumer overfull")
             
-        elif(tank_consumer < tank_consumer_min):        #Turn off both pumps
+        elif(tank_consumer < tank_consumer_min):        #Turn off both aux pumps
             MB_pump1.write_single_register(8, 0)
             MB_pump1.write_single_register(9, 0)
             MB_pump2.write_single_register(8, 0)
@@ -79,6 +78,9 @@ try:
                     print("Return water to pump 2")
 
         #PID controller for consumer unit
+
+        simulated_hour = math_floor( (time.time() - start_time) / c_general['t_s'] ) + 1 #simulated_hour is 1 indexed per definition 
+
         demand_ref = demand_vector[simulated_hour]
 
         tower_tank_level = MB_tower.read_input_registers(settings_pump1['register_tower_tank'], 1)[0]
@@ -94,12 +96,11 @@ try:
         else:
             #Determine whether one or two valves should be operating based on a switching limit
             if(demand_ref > settings_consumer['switching_limit']):
-                OD_valve1 = valve1.consumption_PI(demand_ref/2, flow_valve1)
-                OD_valve2 = valve2.consumption_PI(demand_ref/2, flow_valve2)
+                OD_valve1 = valve1_ctrl.consumption_PI(demand_ref/2, flow_valve1)
+                OD_valve2 = valve2_ctrl.consumption_PI(demand_ref/2, flow_valve2)
             else:
-                OD_valve1 = valve1.consumption_PI(demand_ref, flow_valve1)
-                OD_valve2 = valve2.consumption_PI(0, flow_valve2)
-            
+                OD_valve1 = valve1_ctrl.consumption_PI(demand_ref, flow_valve1)
+                OD_valve2 = valve2_ctrl.consumption_PI(0, flow_valve2)          
             
             #Write to the registers
             MB_cons.write_single_register(settings_consumer['register_valve1'], int(100*OD_valve1))
@@ -113,11 +114,11 @@ except:
     MB_pump2.write_single_register(8, 0)
     MB_pump2.write_single_register(9, 0)
 
-    MB_cons.write_single_register(3,0)    #Close bootom valve 
-    MB_tower.write_single_register(3,0)    #Close bootom valve 
+    MB_cons.write_single_register(3,0)    #Close bottom valve 
+    MB_tower.write_single_register(3,0)    #Close bottom valve 
   
-    MB_cons.write_single_register(1,0)    #Open bootom valve
-    MB_cons.write_single_register(2,0)    #Open bootom valve
+    MB_cons.write_single_register(1,0)    #Open top valve
+    MB_cons.write_single_register(2,0)    #Open top valve
 
     print("Pumps turned off, valves closed due to exception")
 

@@ -16,6 +16,7 @@ class logging:
         timestamp = datetime.now().strftime("%m-%d_%H-%M-%S")
         self.filename = f"{filename}_{timestamp}.csv"
         self.header = ['ID','Data','Time']  # Use the passed header value
+        #self.header = ['ID','Data']  # Use the passed header value
 
         # Check if the file exists, if not, create it
         if not os.path.exists(self.filename):
@@ -23,10 +24,11 @@ class logging:
                 if self.header:
                     csv_writer = csv.writer(csv_file)
                     csv_writer.writerow(self.header)
+                    csv_writer.writerow([])
                     
      # Writing data to the class              
-    def write_data(self, data):
-         data=data+[time.time()]
+    def write_data(self, ID, data):
+         data=[ID,data,time.time()]
         
          with open(self.filename, 'a', newline='') as csv_file:
             csv_writer = csv.writer(csv_file)
@@ -44,16 +46,16 @@ log = logging(filename)
 
 for i in range(1,6):
     test=np.ones((42,1))*0.1*1/i
-    data=["test1",test]
-    log.write_data(data)
+    log.write_data(ID='test1',data=test)
     test2=i 
-    data=["test2",test2]
-    log.write_data(data)
+    log.write_data(ID='test2',data=test2)
+
     time.sleep(2)
     test3=1/(i**2) 
-    data=["test3",test]
-    log.write_data(data)
+    log.write_data(ID='test3',data=test3)
     time.sleep(3)
-data=["test4",1e-3] 
-log.write_data(data)
+    test4=test.shape 
+    log.write_data(ID='test4',data=test4)
+    time.sleep(2)
+log.write_data(ID='test5',data=1e-3)
 print("Printing data")

@@ -9,15 +9,6 @@ close all
 filename = 'example.csv_05-01_08-56-38.csv';
 %opts = detectImportOptions(filename,'PartialFieldRule','keep');
 
-%gg= {'string', 'categorical', 'double'}
-%opts = detectImportOptions(filename);
-
-opts.VariableTypes = {'string', 'categorical', 'double'}; 
-
-opts = detectImportOptions('01_08-56-38.csv');
-opts.VariableTypes = {'string', 'string', 'double'}; % Assuming 'ID' and 'Time' are strings and 'Data' is double
-dataTable = readtable('example.csv_05-01_08-56-38.csv', opts);
-
 
 %opts.EmptyValue = {'NA', 'N/A', 'missing', 'NaN', 'Inf'}; % Specify values to treat as empty
 %opts.PartialFieldRule={'keep'};
@@ -30,7 +21,7 @@ dataTable = readtable('example.csv_05-01_08-56-38.csv', opts);
 
 
 % Read the CSV file into a table
-%data = readtable(filename, 'Delimiter', ',');
+%data = readtable(filename, 'Delimiter', ',', opts);
 data = readtable(filename,opts);
 
 IDLabels=unique(data.ID); 

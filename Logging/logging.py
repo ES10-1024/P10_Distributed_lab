@@ -46,7 +46,7 @@ log = logging(filename)
 
 for i in range(1,6):
     test=np.ones((42,1))*0.1*1/i
-    log.write_data(ID='test1',data=test)
+    log.write_data(ID='test1 ',data=test)
     test2=i 
     log.write_data(ID='test2',data=test2)
 

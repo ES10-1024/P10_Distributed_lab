@@ -1,13 +1,9 @@
-%% Script to pick out the desired IDs from the log file 
-%% Doing a bit of cleaning 
-clf
-clear 
-clc 
-close all 
+function [log] = logProcces(filename)
+%% Function to pick out the desired IDs from the log file 
+%Input filename, the file it is desired to work with, including .csv! 
+%Output log, returns a struct with the data and sampling time
+
 %% Loading in data 
-% Specify the filename IT NEEDS .csv
-filename = 'example.csv_05-01_09-59-03.csv';
-%Setting the datatype of the data loaded in 
 opts = detectImportOptions(filename);
 opts.VariableTypes = {'string', 'string', 'double'}; 
 
@@ -96,4 +92,7 @@ for matrixNumber = 1:numel(IDLabels)
     log.(current_var_name_Time)=eval(current_var_name_Time); 
 end 
 
+
+
+end
 

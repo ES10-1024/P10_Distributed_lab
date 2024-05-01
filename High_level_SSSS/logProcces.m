@@ -1,43 +1,27 @@
-%% Script to pick out the desired IDs from the log file 
-%% Doing a bit of cleaning 
-clf
-clear 
-clc 
-close all 
+function [log] = logProcces(filename)
+%% Function to pick out the desired IDs from the log file 
+%Input filename, the file it is desired to work with, including .csv! 
+%Output log, returns a struct with the data and sampling time
+
 %% Loading in data 
-% Specify the filename
-filename = 'example.csv_05-01_08-56-38.csv';
-%opts = detectImportOptions(filename,'PartialFieldRule','keep');
+opts = detectImportOptions(filename);
+opts.VariableTypes = {'string', 'string', 'double'}; 
+
+data = readtable(filename, opts);
 
 
-%opts.EmptyValue = {'NA', 'N/A', 'missing', 'NaN', 'Inf'}; % Specify values to treat as empty
-%opts.PartialFieldRule={'keep'};
-% Define the format of the 'Data' column as a string
-%formatSpec = '%s';
-
-% Read the CSV file into a table, specifying the format for the 'Data' column
-%data = readtable(filename, 'Format', formatSpec);
-%data = readtable(filename, 'ReadVariableNames', false);
-
-
-% Read the CSV file into a table
-%data = readtable(filename, 'Delimiter', ',', opts);
-data = readtable(filename,opts);
+%% Creating empty matrices for each ID 
 
 IDLabels=unique(data.ID); 
-
-
-% Create empty matrices for each element in the cell array
 for i = 1:numel(IDLabels)
     eval([IDLabels{i} ' = [];']);
     eval([IDLabels{i} 'Time = [];']);
     IDLabelsTime{i}=[IDLabels{i} 'Time'];
 end
 
-%%
+%% Picking out the data for each of the IDs
 for matrixNumber = 1:numel(IDLabels)
     % Get the current matrix variable name
-    
     current_var_name = IDLabels{matrixNumber};
     current_var_name_Time = IDLabelsTime{matrixNumber};
 
@@ -46,31 +30,31 @@ for matrixNumber = 1:numel(IDLabels)
         if strcmp(data.ID{index},  current_var_name )
                 eval([current_var_name_Time ' = [' current_var_name_Time ', data.Time(index)];']);
                 temp=str2double(data.Data(index));
-             %Hvordan fungere det lige???????? 
+                % str2double works, save the data 
             if isnan(temp) == 0 && isempty(temp) == 0
                 eval([current_var_name ' = [' current_var_name ', temp];'])
                 else 
                 % Extract numeric values using regular expression
                 numeric_values = regexp(data.Data(index), '\d+\.\d+', 'match');
-                if isempty(numeric_values{:})==1 
+                if isempty(numeric_values)==1 %If empty do it another way 
                     numeric_values = regexp(data.Data(index), '\d+\.\d?', 'match');
                 end 
-                if isempty(numeric_values{:}) ==0 
-                    % Extract the nested cell array
-                    nested_cell_array = numeric_values{1};
-                    for i = 1:numel(nested_cell_array)
-                        Temp(i,1) = str2double(nested_cell_array{i});
+                %If none empty pick out the data
+                if isempty(numeric_values) ==0 
+                    for i = 1:numel(numeric_values)
+                        temp(i,1) = str2double(numeric_values(1,i));
                     end
                     % Append to the end of the existing matrix
-                    eval([current_var_name ' = [' current_var_name ', Temp];']);
-                else 
-                   eval([current_var_name ' = [' current_var_name ', vectorTemp];']);
+                    eval([current_var_name ' = [' current_var_name ', temp];']);
+                else %Just add the data, noting do to it 
+                   eval([current_var_name ' = [' current_var_name ', data.Data(index)];']);
                 end 
             end   
         end
     end
 end
 
+%% Setting the start time to zero, by finding the minimum timestamp
 % Initialize variables
 min_value = Inf;  % Initialize to positive infinity
 min_index = 0;     % Initialize to an invalid index
@@ -94,18 +78,21 @@ end
 for i = 1:numel(IDLabelsTime)
     % Get the name of the current matrix
     current_matrix_name = IDLabelsTime{i};
-    
+    %Strubtacting the start time
     eval([current_matrix_name ' = [' current_matrix_name '-min_value];'])
 end
 
+%% Making struct to hold all the important data 
+
+for matrixNumber = 1:numel(IDLabels)
+    % Get the current matrix variable name
+    current_var_name = IDLabels{matrixNumber};
+    current_var_name_Time = IDLabelsTime{matrixNumber};
+    log.(current_var_name)=eval(current_var_name); 
+    log.(current_var_name_Time)=eval(current_var_name_Time); 
+end 
 
 
 
-
-
-
-
-
-
-
+end
 

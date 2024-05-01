@@ -17,6 +17,7 @@ class logging:
         self.filename = f"{filename}_{timestamp}.csv"
         self.header = ['ID','Data','Time']  # Use the passed header value
         #self.header = ['ID','Data']  # Use the passed header value
+        self.init_time = 1714561011       #To make time stamp values smaller
 
         # Check if the file exists, if not, create it
         if not os.path.exists(self.filename):
@@ -27,15 +28,15 @@ class logging:
                     csv_writer.writerow([])
                     
      # Writing data to the class              
-    def write_data(self, ID, data):
-         data=[ID,data,time.time()]
+    def log(self, ID, data, n_decimals):
+         data=[ID,np.round(data, n_decimals),np.round(time.time()-self.init_time,3)]
         
          with open(self.filename, 'a', newline='') as csv_file:
             csv_writer = csv.writer(csv_file)
             csv_writer.writerow(data)
          
 
-            
+'''
 #The following can be used to test the class             
 # Specify the filename
 filename = 'example.csv'
@@ -59,3 +60,4 @@ for i in range(1,6):
     time.sleep(2)
 log.write_data(ID='test5',data=1e-3)
 print("Printing data")
+'''            

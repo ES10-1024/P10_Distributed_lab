@@ -19,7 +19,7 @@ if __name__ == '__main__':
     if(use_low_level_ctrl==True):    
         ll_reference_queue = multiprocessing.Queue(1)      #Make queue with one spot
         ll_reference_queue.put(0)                          #Set reference to zero
-        low_level_control_process = multiprocessing.Process(target = low_level_controller,args = (settings_pump1,ll_reference_queue,))
+        low_level_control_process = multiprocessing.Process(target = low_level_controller,args = (settings_pump1,ll_reference_queue,2,))
         low_level_control_process.start() 
         print("Low level controller started")
 

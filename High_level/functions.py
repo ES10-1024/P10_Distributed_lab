@@ -1,5 +1,7 @@
 import numpy as np
 from Solve_each_ADMM import performOptimisation
+from logging import logging
+
 
 
 class ADMM_optimiser_WDN:
@@ -19,6 +21,7 @@ class ADMM_optimiser_WDN:
         self.tau = 2    #Vary rho algorithm parameter
 
         self.z=np.zeros((self.N_c*self.N_q,1)) #Initialization ADMM
+        self.log = logging("ADMM"+str(stakeholder))
 
 
 
@@ -33,6 +36,7 @@ class ADMM_optimiser_WDN:
         #Solve problem
         for k in range(0,self.N_iterations):
             print("Iteration", k)
+            self.log.log("k", k,1)
             #Solve local problem
             try: 
                 self.x_i = performOptimisation(hour, water_height, self.stakeholder,self.rho,self.lambda_i,self.z)
@@ -40,12 +44,15 @@ class ADMM_optimiser_WDN:
             except:
                 self.x_i = 3/4*self.x_i + 1/4*self.z
                 print("Local optimisation failed")
+                self.log.log("optimisation failed", 1, 0)
+            self.log.log("x_i", self.x_i, 5)
 
             ### BEGIN ADMM
             #Determining z: 
             self.z_i = self.x_i + (1/self.rho)*self.lambda_i #Stakeholders entry in sum
             self.conn1.sendall(self.z_i.tobytes())  #Distribute z_i
             self.conn2.sendall(self.z_i.tobytes())
+            self.log.log("z_i", self.z_i, 5)
 
             self.z_2 = np.frombuffer(self.conn1.recv(8*self.N_c*self.N_q), dtype=self.z_i.dtype) #Recive other z_i's
             self.z_3 = np.frombuffer(self.conn2.recv(8*self.N_c*self.N_q), dtype=self.z_i.dtype)
@@ -58,6 +65,7 @@ class ADMM_optimiser_WDN:
                 self.z = self.z - 1/(self.N_s + 1)*(self.z - self.z_tilde)   
             else:
                 self.z = self.z_tilde 
+            self.log.log("z", self.z, 5)
                 
             
             #Determining lambda: 
@@ -65,7 +73,8 @@ class ADMM_optimiser_WDN:
             if self.under_relaxation == True: 
                  self.lambda_i = self.lambda_i -1/(self.N_s + 1)*(self.lambda_i - self.lambda_i_tilde) 
             else: 
-                self.lambda_i = self.lambda_i_tilde       
+                self.lambda_i = self.lambda_i_tilde
+            self.log.log("lambda_i", self.lambda_i, 5)       
             
             ### END ADMM 
             
@@ -84,12 +93,15 @@ class ADMM_optimiser_WDN:
                 self.x_bar = 1/self.N_s*(self.x_i + self.x_2 + self.x_3)
                 self.r_norm_squared =  np.linalg.norm(self.x_i - self.x_bar, 2)**2 + np.linalg.norm(self.x_2 - self.x_bar, 2)**2 + np.linalg.norm(self.x_3 - self.x_bar, 2)**2
                 self.s_norm = self.N_s*self.rho**2*np.linalg.norm(self.x_bar - self.x_bar_old,2)
+                self.log.log("r_norm_squred", self.r_norm_squared, 3)
+                self.log.log("s_norm", self.s_norm, 3)
 
                 if(np.sqrt(self.r_norm_squared)>self.mu*self.s_norm):
                     self.rho = self.rho * self.tau
                 elif(self.s_norm > self.mu*np.sqrt(self.r_norm_squared)):
                     self.rho = self.rho / self.tau
                 print("rho: ", self.rho)
+                self.log.log("rho", self.rho, 2)
             ### End find rho
             
             

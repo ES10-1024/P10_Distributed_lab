@@ -1,10 +1,11 @@
 import time
 from pyModbusTCP.client import ModbusClient
+from logging import logging
 
 
-def low_level_controller(settings, refrence_queue):
-    #q is queue where new refrence can be put
+def low_level_controller(settings, refrence_queue, stakeholder:int):
     print("low level hallow world")
+    log = logging("pump_ctrl"+str(stakeholder))
     last_sample_time = time.time() #unix time 
     pump_percentage = 0
     ref = 0
@@ -25,6 +26,7 @@ def low_level_controller(settings, refrence_queue):
 
             try:
                     ref = refrence_queue.get_nowait() # m^3/h
+                    log.log("ref", ref, 5)
             except:
                 pass
 
@@ -35,9 +37,11 @@ def low_level_controller(settings, refrence_queue):
             if(pump_tank_level < settings['pump_tank_min'] or tower_tank_level > settings['consumer_tank_max']):
                 MB_pump.write_single_register(settings['register_pump'], 0)     #Turn off pump
                 print("Safety level control active")
+                log.log("Safety level active",1,1)
             else:
 
                 flow = 0.06/100*MB_flow.read_input_registers(settings['register_flow_pipe'], 1)[0] #Some unit
+                log.log("flow", flow, 5)
                 
                 error = ref - flow
                 integral = integral + error*settings["sampletime"]

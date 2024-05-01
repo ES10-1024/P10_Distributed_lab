@@ -113,11 +113,10 @@ class consumer_valve_controller:
         self.sampletime = 1
         self.integral = 0  
 
-    def consumption_PI(self, ref):
+    def consumption_PI(self, ref, flow):
 
         self.reference = ref
-        #REMARK! Check whether "scaling" is the same here as for pumps
-        flow = 0.06/100*MB_cons.read_input_registers(self.flow_reg, 1)[0]
+
         
         error = self.reference - flow
         self.integral = self.integral + error*self.sampletime

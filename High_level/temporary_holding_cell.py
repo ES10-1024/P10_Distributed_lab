@@ -14,7 +14,7 @@ MB_cons = ModbusClient(host= settings_consumer['ip_consumer'], port= 502, auto_o
 valve1_ctrl = consumer_valve_controller(settings_consumer['register_flow1']) 
 valve2_ctrl = consumer_valve_controller(settings_consumer['register_flow2']) 
 
-demand_temp = scipy.io.loadmat('ADMM_controller/Data/average_scaled_consumption.mat')
+demand_temp = scipy.io.loadmat('High_level/Data/average_scaled_consumption.mat')
 demand_vector = demand_temp['average_scaled_consumption']
 
 

@@ -11,13 +11,13 @@ def electricity_price_and_flow(time):
     - time (int): The starting position/time .
     """
     #Loading in the actual consumption 
-    dataTemp = scipy.io.loadmat('ADMM_controller/Data/average_scaled_consumption.mat')
+    dataTemp = scipy.io.loadmat('High_level/Data/average_scaled_consumption.mat')
     consumptionActual = dataTemp['average_scaled_consumption']
     #Loading the predicted consumption 
-    dataTemp = scipy.io.loadmat('ADMM_controller/Data/average_scaled_prediction.mat')
+    dataTemp = scipy.io.loadmat('High_level/Data/average_scaled_prediction.mat')
     consumptionPred = dataTemp['average_scaled_prediction']
     #Loading in the electricty price 
-    dataTemp= scipy.io.loadmat('ADMM_controller/Data/ElPrice.mat')
+    dataTemp= scipy.io.loadmat('High_level/Data/Data/ElPrice.mat')
     ElPrice=dataTemp['ElPrice']
     
     normElprice=ElPrice[time:time+24]*1/(np.linalg.norm(ElPrice[time:time+24],2))

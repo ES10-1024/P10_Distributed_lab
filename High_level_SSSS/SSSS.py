@@ -13,7 +13,7 @@ class SSSS:
         self.conn1 = conn1      #TCP connection
         self.conn2 = conn2      #TCP connection
         self.log = log 
-        self.offset = 1 #Offset to avoid negative values  
+        self.offset = 5 #Offset to avoid negative values  
         self.scaling = 10000 #Scaling such rounding becomes insignificant
         self.N_c = 24   #Control horizon
         self.N_q = 2    #number of pumps

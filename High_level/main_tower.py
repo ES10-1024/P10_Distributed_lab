@@ -45,6 +45,7 @@ simulated_hour = 1
 current_sample_time = time.time()
 
 while True:
+        print("Simulated hour:", simulated_hour)
         if(use_low_level_ctrl==True):
               tower_tank_level = MB_tower.read_input_registers(settings_pump2['register_tower_tank'], 1)[0]     #Read water level in tower [mm]
         else:
@@ -60,5 +61,6 @@ while True:
             time.sleep(sleep_time)
         simulated_hour = simulated_hour + 1
         current_sample_time = time.time()
+        print("Simulated hour:", simulated_hour)
 
 

@@ -1,10 +1,6 @@
 import numpy as np
 from Solve_each_ADMM import performOptimisation
-from SSSS import SSSS
 
-#def local_optimiser(hour : int, water_height : float, z: np.array, rho : float, stakeholder : int):
-#     x_i = np.arange(48)*0.99
-#     return x_i
 
 class ADMM_optimiser_WDN:
     def __init__(self, conn1, conn2, N_iterations : int,  N_vary_rho: int, stakeholder: int):
@@ -93,7 +89,7 @@ class ADMM_optimiser_WDN:
                     self.rho = self.rho * self.tau
                 elif(self.s_norm > self.mu*np.sqrt(self.r_norm_squared)):
                     self.rho = self.rho / self.tau
-                print(self.rho)
+                print("rho: ", self.rho)
             ### End find rho
             
             
@@ -113,17 +109,16 @@ class consumer_valve_controller:
         self.sampletime = 1
         self.integral = 0  
 
-    def consumption_PI(self, ref):
+    def consumption_PI(self, ref, flow):
 
         self.reference = ref
-        #REMARK! Check whether "scaling" is the same here as for pumps
-        flow = 0.06/100*MB_cons.read_input_registers(self.flow_reg, 1)[0]
+
         
         error = self.reference - flow
         self.integral = self.integral + error*self.sampletime
 
         #Prevention of integral windup
-        if(self.integral*self.ki > self.saturation_lower):
+        if(self.integral*self.ki > self.saturation_upper):
             self.integral = self.saturation_upper/self.ki
             print("Integral saturated")
 
@@ -136,10 +131,11 @@ class consumer_valve_controller:
         #Ensure that the saturation limits aren't breached
         if(PI_output>self.saturation_upper):
             opening_degree = self.saturation_upper
-            print("Controller saturated")
+            print("Controller saturated, upper limit")
         elif(PI_output < self.saturation_lower):
             opening_degree = self.saturation_lower
-            print("Controller saturated")
+            if(ref>0):
+                print("Controller saturated, lower limit")
         else:
             opening_degree = PI_output
         

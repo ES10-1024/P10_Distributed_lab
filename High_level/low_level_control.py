@@ -21,7 +21,12 @@ def low_level_controller(settings, refrence_queue, stakeholder:int):
     try:
         while True:
             sleep_time = last_sample_time + settings['sampletime']  - time.time()
-            time.sleep(sleep_time)
+            
+            if(sleep_time>0):
+                time.sleep(sleep_time)
+            else:
+                print("Low level control sechduling error")
+                log.log("Schechduling error",1,1)
             last_sample_time = time.time()      #unix time 
 
             try:

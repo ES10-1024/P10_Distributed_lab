@@ -17,7 +17,7 @@ def electricity_price_and_flow(time):
     dataTemp = scipy.io.loadmat('High_level/Data/average_scaled_prediction.mat')
     consumptionPred = dataTemp['average_scaled_prediction']
     #Loading in the electricty price 
-    dataTemp= scipy.io.loadmat('High_level/Data/Data/ElPrice.mat')
+    dataTemp= scipy.io.loadmat('High_level/Data/ElPrice.mat')
     ElPrice=dataTemp['ElPrice']
     
     normElprice=ElPrice[time:time+24]*1/(np.linalg.norm(ElPrice[time:time+24],2))

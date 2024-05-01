@@ -1,4 +1,5 @@
 from Optimise import performOptimisation
+import numpy as np
 #import numpy as np
 #import scipy.io as sci
 
@@ -11,5 +12,9 @@ from Optimise import performOptimisation
 time = 1
 h = 300
 U_hat = performOptimisation(time, h)
-#print(U_hat)
-print(U_hat.x)
+u = np.round(U_hat.x, 4)
+print(U_hat)
+print('Afrundet', u)
+print('Sum', np.sum(u))
+
+#print(U_hat.x)

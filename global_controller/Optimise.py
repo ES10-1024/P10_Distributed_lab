@@ -39,6 +39,7 @@ def performOptimisation(time, h):
     #print('Predicted Demand:', d)
     #print('Electricity prices: ', J_e)
     print('U: ', u_hat)
+    print('Sum', np.sum(u_hat))
     #print('Initial Volume: ', V_0)
 
     return u_hat

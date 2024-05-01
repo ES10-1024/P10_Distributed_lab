@@ -1,5 +1,5 @@
 from Optimise import performOptimisation
-#import numpy as np
+import numpy as np
 #import scipy.io as sci
 
 
@@ -11,3 +11,4 @@ from Optimise import performOptimisation
 time = 1
 h = 300
 U_hat = performOptimisation(time, h)
+

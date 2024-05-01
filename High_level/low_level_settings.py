@@ -39,3 +39,14 @@ settings_pump2 = { #Module 43
     "consumer_tank_max":575
 }
 
+settings_consumer = {
+    "ip_consumer":"192.168.100.32",
+    "register_valve1":1,
+    "register_valve2":2,
+    "register_flow1":3,  #DOBBELTTJEK
+    "register_flow2":4,  #DOBBELTTJEK
+    "register_tank":7,
+    "tank_min": 70,
+    "switching_limit":0.2
+}
+

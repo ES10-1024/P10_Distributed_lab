@@ -7,7 +7,7 @@ clear
 clf 
 close all 
 %% Loading in data 
-filename='example.csv_05-01_17-59-19.csv'
+filename='pump1_05-02_11-32-12.csv'
 opts = detectImportOptions(filename);
 opts.VariableTypes = {'string', 'string', 'double'}; 
 
@@ -42,7 +42,11 @@ end
                 % Extract numeric values using regular expression
                 numeric_values = regexp(data.Data(index), '[-+]?\d*\.?\d+', 'match');
 
-                if isempty(numeric_values)==1 %If empty do it another way 
+                if isempty(numeric_values)==1  || ...
+                         (size(numeric_values, 2) ~= 1 && ...
+                        size(numeric_values, 2) ~= 2 && ...
+                        size(numeric_values, 2) ~= 24 && ...
+                        size(numeric_values, 2) ~= 48) %If empty do it another way 
                     numeric_values = regexp(data.Data(index), '[-+]?\d+\.\d?', 'match');
                 end 
                 %If none empty pick out the data

@@ -23,20 +23,16 @@ end
 
     %Going though each of the entires in the sample data  
 for index=1:1:size(data,1) 
-        %Get the current matrix variable name based on the row
+        %Get the current matrix variable name
         matrixNumber=groupNumber(index,1);
         current_var_name = IDLabels{matrixNumber};
         current_var_name_Time = IDLabelsTime{matrixNumber};
-
-        %Saving the time 
         eval([current_var_name_Time ' = [' current_var_name_Time ', data.Time(index)];']);
-        %Getting out the data 
-        dataWork=str2double(data.Data(index));
-        % if str2double works, save the data (if we do not get NaN or a
-        % empty matrix save the data) 
-        if isnan(dataWork) == 0 && isempty(dataWork) == 0
-            eval([current_var_name ' = [' current_var_name ', dataWork];'])
-        else 
+        temp=str2double(data.Data(index));
+        % is str2double works, save the data 
+        if isnan(temp) == 0 && isempty(temp) == 0
+            eval([current_var_name ' = [' current_var_name ', temp];'])
+            else 
             % Extract numeric values using regular expression
             numeric_values = regexp(data.Data(index), '[-+]?\d*\.?\d+', 'match');
             %If the data is empty or the wrong size do it another way 
@@ -45,17 +41,22 @@ for index=1:1:size(data,1)
                     size(numeric_values, 2) ~= 2 && ...
                     size(numeric_values, 2) ~= 24 && ...
                     size(numeric_values, 2) ~= 48) 
-                    %Getting the data another way!
-                    numeric_values = regexp(data.Data(index), '[-+]?\d+\.\d?', 'match');
+                numeric_values = regexp(data.Data(index), '[-+]?\d+\.\d?', 'match');
             end 
-            %If convter data from string and save it 
+            %If none empty pick out the data
             if isempty(numeric_values) ==0 
-                     dataWork = str2double(numeric_values)';     
-                     eval([current_var_name ' = [' current_var_name ', dataWork];']);
-                     % numeric_values = regexp(data.Data(index), '[-+]?\d+\.\d+', 'match');
-                     % temp = str2double(numeric_values)';
-                     % 
-                     % eval([current_var_name ' = [' current_var_name ', temp];']); 
+                    temp = str2double(numeric_values)';
+              
+                % Append to the end of the existing matrix
+                try 
+                eval([current_var_name ' = [' current_var_name ', temp];']);
+                catch 
+                     numeric_values = regexp(data.Data(index), '[-+]?\d+\.\d+', 'match');
+                     temp = str2double(numeric_values)';
+                     
+                     eval([current_var_name ' = [' current_var_name ', temp];']);
+
+                end 
             else %Just add the data, noting do to it 
                eval([current_var_name ' = [' current_var_name ', data.Data(index)];']);
             end 

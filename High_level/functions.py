@@ -31,7 +31,10 @@ class ADMM_optimiser_WDN:
         
         #Timeshift initial guess
         self.z = np.roll(self.z,1)
-        self.z[-1] = self.z[-2]    
+        self.z[-1] = self.z[-2]  
+
+        self.log.log("simulated_hour", hour, 1)
+        self.log.log("water_height", water_height,1)  
 
         #Solve problem
         for k in range(0,self.N_iterations):
@@ -105,7 +108,7 @@ class ADMM_optimiser_WDN:
             ### End find rho
             
             
-        return self.x_i[:2]       #Return actuation commands
+        return self.x_i       #return solution
     
 
 

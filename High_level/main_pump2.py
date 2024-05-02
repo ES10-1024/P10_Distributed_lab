@@ -9,6 +9,7 @@ from functions import ADMM_optimiser_WDN
 from constants import c_general
 from low_level_settings import settings_pump2
 from low_level_control import low_level_controller
+from logging import logging
 
 use_low_level_ctrl = True
 use_high_level_ctrl = True
@@ -17,6 +18,8 @@ use_high_level_ctrl = True
 
 
 if __name__ == '__main__':
+
+    log = logging("pump2")
 
     if(use_low_level_ctrl==True):    
         ll_reference_queue = multiprocessing.Queue(1)      #Make queue with one spot
@@ -51,15 +54,18 @@ if __name__ == '__main__':
 
     while True:
         print("Simulated hour:", simulated_hour)
+        log.log("Simulated_hour", simulated_hour, 1)
 
         if(use_low_level_ctrl==True):
               tower_tank_level = MB_tower.read_input_registers(settings_pump2['register_tower_tank'], 1)[0]     #Read water level in tower [mm]
         else:
              tower_tank_level = 200
+        log.log("tower_tank_level", tower_tank_level, 1)
 
         if(use_high_level_ctrl==True):
             U=optimiser.optimise(simulated_hour, tower_tank_level) #Calculated actuation
             print(U)
+            log.log("Solution", U, 5)
             flow_pump = U.item(1)
         else:
             flow_pump =  random.uniform(0,0.3)

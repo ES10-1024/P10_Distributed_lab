@@ -17,12 +17,11 @@ def define_A_3(pump_no):
     v[pump_no-1] = 1
     A_3 = np.kron(np.eye(c_general['N_c'],dtype=int),v.T)
     return A_3
-np.set_printoptions(threshold=np.inf)  # Display entire array
+
 
 A_1 = np.kron(np.eye(c_general['N_c'],dtype=int),np.ones((1, c_general['N_q'])) )
 A_2 = np.tril(np.ones((c_general['N_c'], c_general['N_c'])))
 
-#Gotta define A_3 matrices for each pump
 A_31 = define_A_3(1)
 A_32 = define_A_3(2)
 
@@ -50,8 +49,9 @@ def pump_specific_constraints(pump_constants, pump_no, A_3):
     return A_Q_max, b_Q_max, A_q_max, b_q_max
 
 
-# Function to define the eletricty part of the cost function for the two pumps 
-def define_Jp(pump_constants, A_3, J_e, h_V, d,rho,Lambda,z):
+
+def define_Jp(pump_constants, A_3, J_e, h_V, d):
+    # Function to define the eletricty part of the cost function for the two pumps 
 
     #Elevation and water height
     elevation =    ((c_tower['rho_w']*c_tower['g_0'])/c_general['condition_scaling'])*(pump_constants['h']* (A_3 @ Uc))
@@ -70,15 +70,17 @@ def define_Jp(pump_constants, A_3, J_e, h_V, d,rho,Lambda,z):
 
 def define_cost_func_and_constraints_ADMM(d,V_0, J_e, stakeholderID,rho,Lambda,z): 
     #Must be defined before cost function can be found
+    
     #Flow into the tower
     q_sigma = (A_1 @ (Uc* c_general['hours_to_seconds']*c_general['t_s']))  - (d* c_general['hours_to_seconds']*c_general['t_s']) 
 
-    #Height of water in the tower
-    h_V = 1/c_tower['A_t']* (A_2 @ q_sigma + V_0)
+    
+    h_V = 1/c_tower['A_t']* (A_2 @ q_sigma + V_0)   #Height of water in tower
     
     if stakeholderID==1: 
-        #Water Tower 
-        J_p=0 
+        #Water tower
+        J_p=0   #Private part of cost function
+
         #Constraints
         #Positive pump flow
         A_q_min = -eye_NcNq
@@ -99,8 +101,9 @@ def define_cost_func_and_constraints_ADMM(d,V_0, J_e, stakeholderID,rho,Lambda,z
     
     if stakeholderID==2: 
         #Pump 1
-        #Cost function 
-        J_p= define_Jp(c_pump1, A_31, J_e, h_V, d,rho,Lambda,z)
+        
+        J_p= define_Jp(c_pump1, A_31, J_e, h_V, d)  #Private part of cost function
+
         #Constraints 
         #Positive pump flow
         A_q_min = -eye_NcNq
@@ -116,11 +119,9 @@ def define_cost_func_and_constraints_ADMM(d,V_0, J_e, stakeholderID,rho,Lambda,z
         
     if stakeholderID==3: 
         #Pump 2
-        #Cost function     
-        J_p = define_Jp(c_pump2, A_32, J_e, h_V, d,rho,Lambda,z) 
+        J_p = define_Jp(c_pump2, A_32, J_e, h_V, d) #Private part of cost function
     
         #Constraints
-    
         #Positive pump flow
         A_q_min = -eye_NcNq
         b_q_min = zeros_NcNq
@@ -138,8 +139,7 @@ def define_cost_func_and_constraints_ADMM(d,V_0, J_e, stakeholderID,rho,Lambda,z
     #Cost function for difference in tower before and after
     J_V = c_tower['kappa']/3*((c_general['t_s']*ones_Nc.T) @ (A_1 @ (Uc * c_general['hours_to_seconds'])-(d* c_general['hours_to_seconds'])))**2
     
-    #Augemnt Lagrange part: 
-    
+    #Augemnt Lagrange part of cost function: 
     J_L =  Lambda.T @ (Uc - z) +rho/2 * ((Uc - z).T @ (Uc - z))
 
     # Defining the entire cost function
@@ -148,35 +148,31 @@ def define_cost_func_and_constraints_ADMM(d,V_0, J_e, stakeholderID,rho,Lambda,z
     
 def performOptimisation(time, WaterHeightmm, stakeholderID,rho,Lambda,z):  
     consumption, d, J_e = electricity_price_and_flow(time)
-    J_e = np.round(J_e, 4)
-    d = np.round(d, 4)
-    #Determing the water volume 
-    V_0 = np.round(WaterHeightmm/1000*c_tower['A_t'], 4)
+    J_e = np.round(J_e, 4)  #Electricity price vector
+    d = np.round(d, 4)      #Predicted demand vector
     
-    #Define cost function and constraints
+    V_0 = np.round(WaterHeightmm/1000*c_tower['A_t'], 4)    #Volume of water in tower
+    
     J_k, A, b = define_cost_func_and_constraints_ADMM(d, V_0, J_e, stakeholderID,rho,Lambda,z)
-    #Gotta turn the function into a casadi function, potherwise casadi will not work with me
-    J_k_c = ca.Function('J_k_c', [Uc], [J_k])
+    J_k_c = ca.Function('J_k_c', [Uc], [J_k])   #Make Casadi cost function with optimsation variables U_c
 
-    #Initialise optimisation problem
-    opti = ca.Opti()
-    #Define optimisation variable
-    U_k = opti.variable(c_general["N_c"]*c_general['N_q'], 1)
-    #Define optimisation problem
-    opti.minimize(J_k_c(U_k))
-    #Define constraints
-    opti.subject_to(A @ U_k <= b)
-    #Choose solver
-    p_opts = dict(print_time=False, verbose=False)
-    s_opts = dict(print_level=0)
-
-    opti.solver('ipopt', p_opts, s_opts)
     
-    #Solve
-    sol = opti.solve()
-    #Print solution
-    u_hat = sol.value(U_k)
+    opti = ca.Opti()    #Initialise optimisation problem
+    U_k = opti.variable(c_general["N_c"]*c_general['N_q'], 1)   #Define optimisation variable
+    opti.minimize(J_k_c(U_k))       #Define optimisation problem
+    
+    opti.subject_to(A @ U_k <= b)   #Define constraints
+    
+    p_printing_opts = dict(print_time=False, verbose=False) #Make printing settings for Casadi
+    s_printing_opts = dict(print_level=0)
+
+    opti.solver('ipopt', p_printing_opts, s_printing_opts)  #Chose solver, set prinitng options
+    
+    
+    solution = opti.solve()
+    u_hat = solution.value(U_k)
     u_hat = np.round(u_hat, 4)
+    
     #print('Predicted Demand:', d)
     #print('Electricity prices: ', J_e)
     #print('U: ', u_hat)

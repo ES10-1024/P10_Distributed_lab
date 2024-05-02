@@ -69,6 +69,7 @@ def low_level_controller(settings, refrence_queue, stakeholder:int):
                 else:
                     pump_percentage = PI_output
                     print("Lowlevel control, flow, desired flow:", flow, ref)
+                log.log("Pump_percentage", pump_percentage, 1)
             
                 MB_pump.write_single_register(settings['register_pump'], int(100*pump_percentage))
 

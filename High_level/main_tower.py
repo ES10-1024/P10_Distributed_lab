@@ -15,12 +15,14 @@ use_low_level_ctrl = True
 use_high_level_ctrl = True
 
 print("Halow world")
+log  = logging("tower")
 
 if(use_low_level_ctrl==True):
         MB_tower = ModbusClient(host = settings_pump2['ip_tower'], port = 502, auto_open = True)    #Connection to read water level in tower
-      
 
 if(use_high_level_ctrl):
+        optimiser = ADMM_optimiser_WDN(conn_pump1, conn_pump2,125, 10, 1)
+        
         tower_IP = '192.168.100.32'
         tower_IP = "127.0.0.1"
         port_pump1 = 5400
@@ -39,9 +41,7 @@ if(use_high_level_ctrl):
         conn_pump2, addr_pump2 = s_pump2.accept()
         print("Connected to pump 2, all TCP connections setup")
 
-        optimiser = ADMM_optimiser_WDN(conn_pump1, conn_pump2,125, 10, 1)
 
-log  = logging("tower")
 simulated_hour = 1
 current_sample_time = time.time()
 

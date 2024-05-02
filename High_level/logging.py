@@ -14,7 +14,7 @@ class logging:
     def __init__(self, filename):  
         #Getting timestamp for the filename
         timestamp = datetime.now().strftime("%m-%d_%H-%M-%S")
-        self.filename = f"{filename}_{timestamp}.csv"
+        self.filename = f"Logging/Log_files/{filename}_{timestamp}.csv"
         self.header = ['ID','Data','Time']  # Use the passed header value
         #self.header = ['ID','Data']  # Use the passed header value
         self.init_time = 1714561011       #To make time stamp values smaller

@@ -114,7 +114,7 @@ class consumer_valve_controller:
     def __init__(self, flow_register):
         self.reference = 0
         self.flow_reg = flow_register
-        self.kp = 40
+        self.kp = 30    #40 in report
         self.ki = 20
         self.saturation_upper = 100
         self.saturation_lower = 0 

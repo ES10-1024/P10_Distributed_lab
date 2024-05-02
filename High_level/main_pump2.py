@@ -10,6 +10,7 @@ from constants import c_general
 from low_level_settings import settings_pump2
 from low_level_control import low_level_controller
 from logging import logging
+from Get_Electricity_Flow import electricity_price_and_flow
 
 use_low_level_ctrl = True
 use_high_level_ctrl = True
@@ -66,6 +67,9 @@ if __name__ == '__main__':
             U=optimiser.optimise(simulated_hour, tower_tank_level) #Calculated actuation
             print(U)
             log.log("Solution", U, 5)
+            consumption, demand_pred, electricity_price = electricity_price_and_flow(simulated_hour)
+            log.log("demand_pred", demand_pred, 5)
+            log.log("electricity_price", electricity_price, 2)
             flow_pump = U.item(1)
         else:
             flow_pump =  random.uniform(0,0.3)

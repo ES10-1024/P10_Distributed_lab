@@ -15,8 +15,8 @@ pump1=logProcces('pump1_05-02_11-32-12.csv')
 pump2=logProcces('pump2_05-02_11-32-14.csv')
 
 tow = logProcces('tower_05-02_11-32-10.csv')
-
-%save('05-01_13-51-15.mat')
+%%
+save('05-02_11-32-14.mat')
 
 %% Evaluate valve controller
 clf

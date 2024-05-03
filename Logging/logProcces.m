@@ -30,15 +30,18 @@ for index=1:1:size(data,1)
 
         %Saving the time 
         eval([current_var_name_Time ' = [' current_var_name_Time ', data.Time(index)];']);
-        %Getting out the data 
+        %getting the data from string to double
         dataWork=str2double(data.Data(index));
         % if str2double works, save the data (if we do not get NaN or a
         % empty matrix save the data) 
         if isnan(dataWork) == 0 && isempty(dataWork) == 0
             eval([current_var_name ' = [' current_var_name ', dataWork];'])
         else 
+            % Replace 'e-' with 'e-'
+            str = strrep(data.Data(index), 'e-', 'e-');
             % Extract numeric values using regular expression
-            numeric_values = regexp(data.Data(index), '[-+]?\d*\.?\d+', 'match');
+            %numeric_values = regexp(data.Data(index), '[-+]?\d+\.\d+', 'match');
+            numeric_values = regexp(data.Data(index), '[-+]?\d+\.\d+e[-+]\d+', 'match');
             %If the data is empty or the wrong size do it another way 
             if isempty(numeric_values)==1  || ...
                      (size(numeric_values, 2) ~= 1 && ...
@@ -46,7 +49,8 @@ for index=1:1:size(data,1)
                     size(numeric_values, 2) ~= 24 && ...
                     size(numeric_values, 2) ~= 48) 
                     %Getting the data another way!
-                    numeric_values = regexp(data.Data(index), '[-+]?\d+\.\d?', 'match');
+                     numeric_values = regexp(data.Data(index), '[-+]?\d*\.?\d+', 'match');
+                    %numeric_values = regexp(data.Data(index), '[-+]?\d*\.\d?', 'match');
             end 
             %If convter data from string and save it 
             if isempty(numeric_values) ==0 

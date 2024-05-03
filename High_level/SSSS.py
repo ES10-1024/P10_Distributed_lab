@@ -7,7 +7,7 @@ class SSSS:
         self.scaling = 10000 #Scaling such rounding becomes insignificant
         self.N_c = 24   #Control horizon
         self.N_q = 2    #number of pumps
-        self.Beta = 10000019 # Prime number used for SSSS 
+        self.Beta = 4294967029 # Prime number used for SSSS 
         self.N_s = 3 #Number of stakeholders
     
     #Hidding the secret in second degrees polyniums  

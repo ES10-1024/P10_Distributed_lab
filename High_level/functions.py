@@ -17,6 +17,7 @@ class ADMM_optimiser_WDN:
         self.under_relaxation=False # Using under relaxation
         
         self.rho = 1    #Initial
+        self.rho_last_solve = self.rho
         self.mu = 5#10    #Vary rho algorithm parameter
         self.tau = 1.5    #Vary rho algorithm parameter
 
@@ -32,6 +33,8 @@ class ADMM_optimiser_WDN:
         #Timeshift initial guess
         self.z = np.roll(self.z,1)
         self.z[-1] = self.z[-2]  
+
+        self.rho = self.rho_last_solve
 
         self.log.log("simulated_hour", hour, 1)
         self.log.log("water_height", water_height,1)  
@@ -106,8 +109,12 @@ class ADMM_optimiser_WDN:
                 print("rho: ", self.rho)
                 self.log.log("rho", self.rho, 2)
             ### End find rho
-            
-            
+
+            #Increase rho with factor 500 at iteration 30
+            if(k==30):
+                self.rho_last_solve = self.rho
+                self.rho = self.rho*500
+                 
         return self.x_i       #return solution
     
 

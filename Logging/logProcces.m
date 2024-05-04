@@ -12,6 +12,14 @@ data = readtable(filename, opts);
 %% Creating empty matrices for each ID 
 
 [IDLabels, ~,groupNumber] =unique(data.ID); 
+
+%Replacing space with _ in naming
+for i = 1:numel(IDLabels)
+    IDLabels{i} = strrep(IDLabels{i}, ' ', '_');
+end
+
+
+
 for i = 1:numel(IDLabels)
     eval([IDLabels{i} ' = [];']);
     eval([IDLabels{i} 'Time = [];']);

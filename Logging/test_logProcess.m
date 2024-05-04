@@ -7,7 +7,9 @@ clear
 clf 
 close all 
 %% Loading in data 
-filename='pump1_05-02_11-32-12.csv'
+addpath('C:\Users\is123\Downloads\OneDrive_1_5-3-2024\')
+
+filename='pump_ctrl2_05-02_11-32-13.csv'
 opts = detectImportOptions(filename);
 opts.VariableTypes = {'string', 'string', 'double'}; 
 
@@ -17,6 +19,12 @@ data = readtable(filename, opts);
 %% Creating empty matrices for each ID 
 
 [IDLabels, ~,groupNumber] =unique(data.ID); 
+% Replace spaces with underscores in each string
+for i = 1:numel(IDLabels)
+    IDLabels{i} = strrep(IDLabels{i}, ' ', '_');
+end
+
+
 for i = 1:numel(IDLabels)
     eval([IDLabels{i} ' = [];']);
     eval([IDLabels{i} 'Time = [];']);
@@ -27,48 +35,49 @@ end
 
 
     %Going though each of the entires in the sample data  
-    for index=1:1:size(data,1) 
-            %Get the current matrix variable name
-            matrixNumber=groupNumber(index,1);
-            current_var_name = IDLabels{matrixNumber};
-            current_var_name_Time = IDLabelsTime{matrixNumber};
-        if strcmp(data.ID{index},  current_var_name )
-                eval([current_var_name_Time ' = [' current_var_name_Time ', data.Time(index)];']);
-                temp=str2double(data.Data(index));
-                % str2double works, save the data 
-            if isnan(temp) == 0 && isempty(temp) == 0
-                eval([current_var_name ' = [' current_var_name ', temp];'])
-                else 
-                % Extract numeric values using regular expression
-                numeric_values = regexp(data.Data(index), '[-+]?\d*\.?\d+', 'match');
+for index=1:1:size(data,1) 
+        %Get the current matrix variable name based on the row
+        matrixNumber=groupNumber(index,1);
+        current_var_name = IDLabels{matrixNumber};
+        current_var_name_Time = IDLabelsTime{matrixNumber};
 
-                if isempty(numeric_values)==1  || ...
-                         (size(numeric_values, 2) ~= 1 && ...
-                        size(numeric_values, 2) ~= 2 && ...
-                        size(numeric_values, 2) ~= 24 && ...
-                        size(numeric_values, 2) ~= 48) %If empty do it another way 
-                    numeric_values = regexp(data.Data(index), '[-+]?\d+\.\d?', 'match');
-                end 
-                %If none empty pick out the data
-                if isempty(numeric_values) ==0 
-                        temp = str2double(numeric_values)';
-                  
-                    % Append to the end of the existing matrix
-                    try 
-                    eval([current_var_name ' = [' current_var_name ', temp];']);
-                    catch 
-                         numeric_values = regexp(data.Data(index), '[-+]?\d+\.\d+', 'match');
-                         temp = str2double(numeric_values)';
-                         
-                         eval([current_var_name ' = [' current_var_name ', temp];']);
-
-                    end 
-                else %Just add the data, noting do to it 
-                   eval([current_var_name ' = [' current_var_name ', data.Data(index)];']);
-                end 
-            end   
-        end
-    end
+        %Saving the time 
+        eval([current_var_name_Time ' = [' current_var_name_Time ', data.Time(index)];']);
+        %getting the data from string to double
+        dataWork=str2double(data.Data(index));
+        % if str2double works, save the data (if we do not get NaN or a
+        % empty matrix save the data) 
+        if isnan(dataWork) == 0 && isempty(dataWork) == 0
+            eval([current_var_name ' = [' current_var_name ', dataWork];'])
+        else 
+            % Replace 'e-' with 'e-'
+            str = strrep(data.Data(index), 'e-', 'e-');
+            % Extract numeric values using regular expression
+            %numeric_values = regexp(data.Data(index), '[-+]?\d+\.\d+', 'match');
+            numeric_values = regexp(data.Data(index), '[-+]?\d+\.\d+e[-+]\d+', 'match');
+            %If the data is empty or the wrong size do it another way 
+            if isempty(numeric_values)==1  || ...
+                     (size(numeric_values, 2) ~= 1 && ...
+                    size(numeric_values, 2) ~= 2 && ...
+                    size(numeric_values, 2) ~= 24 && ...
+                    size(numeric_values, 2) ~= 48) 
+                    %Getting the data another way!
+                     numeric_values = regexp(data.Data(index), '[-+]?\d*\.?\d+', 'match');
+                    %numeric_values = regexp(data.Data(index), '[-+]?\d*\.\d?', 'match');
+            end 
+            %If convter data from string and save it 
+            if isempty(numeric_values) ==0 
+                     dataWork = str2double(numeric_values)';     
+                     eval([current_var_name ' = [' current_var_name ', dataWork];']);
+                     % numeric_values = regexp(data.Data(index), '[-+]?\d+\.\d+', 'match');
+                     % temp = str2double(numeric_values)';
+                     % 
+                     % eval([current_var_name ' = [' current_var_name ', temp];']); 
+            else %Just add the data, noting do to it 
+               eval([current_var_name ' = [' current_var_name ', data.Data(index)];']);
+            end 
+         end   
+end
 
 
 %% Setting the start time to zero, by finding the minimum timestamp

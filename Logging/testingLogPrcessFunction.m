@@ -5,6 +5,7 @@ clf
 close all 
 
 %% Testing the logProcess function 
+addpath('C:\Users\is123\Downloads\OneDrive_1_5-3-2024\')
 rw_con=logProcces('return_and_consumer_valve_ctrl_05-02_11-32-16.csv');
 ADMM_1 = logProcces('ADMM1_05-02_11-32-14.csv')
 ADMM_2 = logProcces('ADMM2_05-02_11-32-14.csv')

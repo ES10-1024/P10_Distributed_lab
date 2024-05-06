@@ -17,8 +17,7 @@ end
 
 %% Setting up paralle work and getting the amount of works
 try
-    % Create a parallel pool of workers with 7 workers
-    pool = parpool( 'Size', 7);
+    pool = parpool;
 end 
 
 % Get the current parallel pool object
@@ -53,6 +52,33 @@ for i = 1:numWorkers
     combinedStruct = mergeStructs(combinedStruct, outputStructs{i});
 end
 
+%% Setting the start time to zero, by finding the minimum timestamp
+% % Initialize variables
+min_value = Inf;  % Initialize to positive infinity
+min_index = 0;     % Initialize to an invalid index
+
+% Iterate through the cell array
+for i = 1:numel(IDLabelsTime)
+    % Get the name of the current matrix
+    current_matrix_name = IDLabelsTime{i};
+
+    % Get the value of the first entire of the current matrix
+    current_value = eval([current_matrix_name '(1)']);
+
+    % Compare the value with the current minimum
+    if current_value < min_value
+        min_value = current_value;  % Update minimum value
+        min_index = i;               % Update index of the minimum value
+    end
+end
+
+% Iterate through the cell array
+for i = 1:numel(IDLabelsTime)
+    % Get the name of the current matrix
+    current_matrix_name = IDLabelsTime{i};
+    %Strubtacting the start time
+    eval([current_matrix_name ' = [' current_matrix_name '-min_value];'])
+end
 
 
 %% The rest is functions!!!!!! 

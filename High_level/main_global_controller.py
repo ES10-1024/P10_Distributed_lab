@@ -9,9 +9,11 @@ from low_level_control import low_level_controller
 from logging import logging
 from global_controller import global_controller_optimisation
 from Get_Electricity_Flow import electricity_price_and_flow
+print("Imports finished")
 
-if __name__ ==' main': 
+if __name__ == '__main__':
     log = logging("global_control")
+    print("in Main")
 
     ll_reference_queue1 = multiprocessing.Queue(1)      #Make queue with one spot
     ll_reference_queue1.put(0)                          #Set reference to zero
@@ -48,7 +50,7 @@ if __name__ ==' main':
         log.log("electricity_price", electricity_price, 2)
       
 
-
+        print(type( U.item(0)))
         
         ll_reference_queue1.put(U.item(0))   #Send command to low level controller
         ll_reference_queue2.put(U.item(1))   #Send command to low level controller

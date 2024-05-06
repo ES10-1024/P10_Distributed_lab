@@ -2,49 +2,9 @@ import casadi
 import numpy as np
 
 
-from cost_const import define_cost_func_and_constraints, Uc
+
 from Get_Electricity_Flow import electricity_price_and_flow
 from constants import c_general, c_tower, c_pump1, c_pump2
-
-
-
-def global_controller_optimisation(time, h):
-
-    consumption, d, J_e = electricity_price_and_flow(time)
-    J_e = np.round(J_e, 4)
-    d = np.round(d, 4)
-
-    V_0 = np.round(h/1000*c_tower['A_t'], 4)
-
-
-    #Define cost function and constraints
-    J_k, A, b = cost_functions_constraints_global_controller(d, V_0, J_e)
-
-    #Gotta turn the function into a casadi function, potherwise casadi will not work with me
-    J_k_c = casadi.Function('J_k_c', [Uc], [J_k])
-
-    #Initialise optimisation problem
-    opti = casadi.Opti()
-    #Define optimisation variable
-    U_k = opti.variable(c_general["N_c"]*c_general['N_q'], 1)
-    #Define optimisation problem
-    opti.minimize(J_k_c(U_k))
-    #Define constraints
-    opti.subject_to(A @ U_k <= b)
-    #Choose solver
-    opti.solver('sqpmethod')
-    #Solve
-    sol = opti.solve()
-    #Print solution
-    u_hat = sol.value(U_k)
-    u_hat = np.round(u_hat, 4)
-    #print('Predicted Demand:', d)
-    #print('Electricity prices: ', J_e)
-    print('U: ', u_hat)
-    print('Sum', np.sum(u_hat))
-    #print('Initial Volume: ', V_0)
-
-    return u_hat
 
 
 Uc = casadi.MX.sym('Uc', c_general['N_c']*c_general['N_q'])
@@ -87,7 +47,7 @@ def define_Jp(pump_constants, A_3, J_e, h_V, d):
     #Final cost function for J_p
     return J_e.T @ P
 
-def dcost_functions_constraints_global_controller(d, V_0, J_e):
+def cost_functions_constraints_global_controller(d, V_0, J_e):
 #Must be defined before cost function can be found
     #Flow into the tower
     q_sigma = (A_1 @ (Uc* c_general['hours_to_seconds']*c_general['t_s']))  - (d* c_general['hours_to_seconds']*c_general['t_s']) 
@@ -144,4 +104,46 @@ def pump_specific_constraints(pump_constants, pump_no, A_3):
     b_q_max = ones_Nc*pump_constants['q_max']   
     
     return A_Q_max, b_Q_max, A_q_max, b_q_max
+
+
+
+
+
+def global_controller_optimisation(time, h):
+
+    consumption, d, J_e = electricity_price_and_flow(time)
+    J_e = np.round(J_e, 4)
+    d = np.round(d, 4)
+
+    V_0 = np.round(h/1000*c_tower['A_t'], 4)
+
+
+    #Define cost function and constraints
+    J_k, A, b = cost_functions_constraints_global_controller(d, V_0, J_e)
+
+    #Gotta turn the function into a casadi function, potherwise casadi will not work with me
+    J_k_c = casadi.Function('J_k_c', [Uc], [J_k])
+
+    #Initialise optimisation problem
+    opti = casadi.Opti()
+    #Define optimisation variable
+    U_k = opti.variable(c_general["N_c"]*c_general['N_q'], 1)
+    #Define optimisation problem
+    opti.minimize(J_k_c(U_k))
+    #Define constraints
+    opti.subject_to(A @ U_k <= b)
+    #Choose solver
+    opti.solver('sqpmethod')
+    #Solve
+    sol = opti.solve()
+    #Print solution
+    u_hat = sol.value(U_k)
+    u_hat = np.round(u_hat, 4)
+    #print('Predicted Demand:', d)
+    #print('Electricity prices: ', J_e)
+    print('U: ', u_hat)
+    print('Sum', np.sum(u_hat))
+    #print('Initial Volume: ', V_0)
+
+    return u_hat
 

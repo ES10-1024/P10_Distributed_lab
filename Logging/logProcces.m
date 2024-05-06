@@ -32,7 +32,7 @@ end
     %Going though each of the entires in the sample data  
 for index=1:1:size(data,1) 
         %Get the current matrix variable name based on the row
-        matrixNumber=groupNumber(index,1);
+        matrixNumber = groupNumber(index,1);
         current_var_name = IDLabels{matrixNumber};
         current_var_name_Time = IDLabelsTime{matrixNumber};
 

@@ -3,8 +3,13 @@ clear
 clc 
 clf 
 close all 
+%%
+
+%% 
+addpath('C:\Users\is123\Downloads\OneDrive_1_6.5.2024')
 
 %% Testing the logProcess function 
+tic
 rw_con=logProcces('return_and_consumer_valve_ctrl_05-02_11-32-16.csv');
 ADMM_1 = logProcces('ADMM1_05-02_11-32-14.csv')
 ADMM_2 = logProcces('ADMM2_05-02_11-32-14.csv')
@@ -15,6 +20,7 @@ pump1=logProcces('pump1_05-02_11-32-12.csv')
 pump2=logProcces('pump2_05-02_11-32-14.csv')
 
 tow = logProcces('tower_05-02_11-32-10.csv')
+toc
 %%
 save('05-02_11-32-14.mat')
 ADMM_1.x_i(:,125)

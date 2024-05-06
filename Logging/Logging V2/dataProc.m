@@ -17,7 +17,8 @@ end
 
 %% Setting up paralle work and getting the amount of works
 try
-    parpool();
+    % Create a parallel pool of workers with 7 workers
+    pool = parpool( 'Size', 7);
 end 
 
 % Get the current parallel pool object

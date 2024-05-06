@@ -16,8 +16,8 @@ MB_pump1 = ModbusClient(host = settings_pump1['ip_pump'], port = 502, auto_open=
 MB_pump2 = ModbusClient(host = settings_pump2['ip_pump'], port = 502, auto_open=True)
 MB_cons = ModbusClient(host= settings_consumer['ip_consumer'], port= 502, auto_open= True)
 
-valve1_ctrl = consumer_valve_controller(settings_consumer['register_flow1']) 
-valve2_ctrl = consumer_valve_controller(settings_consumer['register_flow2']) 
+valve1_ctrl = consumer_valve_controller(settings_consumer['register_flow1'], 1) 
+valve2_ctrl = consumer_valve_controller(settings_consumer['register_flow2'], 2) 
 
 demand_temp = scipy.io.loadmat('High_level/Data/average_scaled_consumption.mat')
 demand_vector = demand_temp['average_scaled_consumption']

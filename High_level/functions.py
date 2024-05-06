@@ -121,7 +121,7 @@ class ADMM_optimiser_WDN:
 
 class consumer_valve_controller:
 
-    def __init__(self, flow_register):
+    def __init__(self, flow_register, valve: int):
         self.reference = 0
         self.flow_reg = flow_register
         self.kp = 30    #40 in report
@@ -130,11 +130,14 @@ class consumer_valve_controller:
         self.saturation_lower = 0 
         self.sampletime = 1
         self.integral = 0  
+        self.log = logging("consumption_valve"+str(valve))
 
     def consumption_PI(self, ref, flow):
 
-        self.reference = ref
+        self.log.log("flow", flow, 5)
 
+        self.reference = ref
+        self.log.log("reference", ref, 5)
         
         error = self.reference - flow
         self.integral = self.integral + error*self.sampletime
@@ -161,4 +164,5 @@ class consumer_valve_controller:
         else:
             opening_degree = PI_output
         
+        self.log.log("opening_degree", opening_degree, 1)
         return opening_degree

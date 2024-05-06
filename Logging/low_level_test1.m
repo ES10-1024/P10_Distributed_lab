@@ -131,6 +131,7 @@ for l = pump1.SolutionTime
     xlabel('Time [h_s]')
     ylim([0 0.6])
     xlim([0 pump1.SolutionTime(end)/600])
+    grid 
     
 
     %Volume in tower
@@ -152,6 +153,7 @@ for l = pump1.SolutionTime
     xlabel('Time [h_s]')
     ylim([20 170])
     xlim([0 pump1.SolutionTime(end)/600])
+    grid
 
     %Demand
     subplot(2,2,4)
@@ -166,11 +168,15 @@ for l = pump1.SolutionTime
     plot(rw_con.DemandTime(1:idx)/600,rw_con.Demand(1:idx))
     ylim([0 0.6])
     xlim([0 pump1.SolutionTime(end)/600])
-    
+    grid
+
+    legend("Prediction", "Measured", "Commanded")
+    fontname(f,"Times")
+    drawnow
+    exportgraphics(f,folder+"plot.gif", Append=true)
 
 
     drawnow
-    pause(0.3)
 end
 
 

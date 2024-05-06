@@ -3,12 +3,12 @@ This Function solve one of the 3 consensus ADMM local problems,
 it setup the optimization problem with its constraints and solve the problem   
 ''' 
 import numpy as np
-import casadi as ca
+import casadi
 from constants import c_general, c_tower, c_pump1, c_pump2
 from Get_Electricity_Flow import electricity_price_and_flow
 
 #Someting stupid that casadi wants 
-Uc = ca.MX.sym('Uc', c_general['N_c']*c_general['N_q'])
+Uc = casadi.MX.sym('Uc', c_general['N_c']*c_general['N_q'])
 
 #Generate matrices needed to write cost function and constraints, a function is made to make A_31 and A_31 
 def define_A_3(pump_no):
@@ -58,8 +58,8 @@ def define_Jp(pump_constants, A_3, J_e, h_V, d):
     water_height = ((c_tower['rho_w']*c_tower['g_0'])/c_general['condition_scaling'])*(h_V*(A_3 @ Uc))
 
     #Pipe resistances
-    pipe_resistance = pump_constants['r_f']/c_general['condition_scaling']*(A_3 @ (Uc * ca.fabs(Uc)*ca.fabs(Uc)))
-    combined_pipe_resistance = (A_3 @ Uc) * (c_general['r_fsigma']/c_general['condition_scaling'] * (ca.fabs((A_1 @ Uc)-d))*((A_1 @ Uc)-d))                                                    
+    pipe_resistance = pump_constants['r_f']/c_general['condition_scaling']*(A_3 @ (Uc * casadi.fabs(Uc)*casadi.fabs(Uc)))
+    combined_pipe_resistance = (A_3 @ Uc) * (c_general['r_fsigma']/c_general['condition_scaling'] * (casadi.fabs((A_1 @ Uc)-d))*((A_1 @ Uc)-d))                                                    
     
     #Total power consumption
     P = 1/pump_constants['eta'] * (pipe_resistance + combined_pipe_resistance + water_height + elevation)
@@ -154,10 +154,10 @@ def performOptimisation(time, WaterHeightmm, stakeholderID,rho,Lambda,z):
     V_0 = np.round(WaterHeightmm/1000*c_tower['A_t'], 4)    #Volume of water in tower
     
     J_k, A, b = define_cost_func_and_constraints_ADMM(d, V_0, J_e, stakeholderID,rho,Lambda,z)
-    J_k_c = ca.Function('J_k_c', [Uc], [J_k])   #Make Casadi cost function with optimsation variables U_c
+    J_k_c = casadi.Function('J_k_c', [Uc], [J_k])   #Make Casadi cost function with optimsation variables U_c
 
     
-    opti = ca.Opti()    #Initialise optimisation problem
+    opti = casadi.Opti()    #Initialise optimisation problem
     U_k = opti.variable(c_general["N_c"]*c_general['N_q'], 1)   #Define optimisation variable
     opti.minimize(J_k_c(U_k))       #Define optimisation problem
     

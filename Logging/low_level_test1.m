@@ -105,7 +105,7 @@ for l = pump1.SolutionTime
     price_prediction_time = pump1.Simulated_hour(i)*600 + (-1:22)*600;
     stairs(price_prediction_time/600, pump1.electricity_price(:,i))
     hold on
-    stairs(pump1.Simulated_hour(1:i)-1,pump1.electricity_price(1:i,1))
+    stairs(pump1.Simulated_hour(1:i)-1,pump1.electricity_price(1,1:i))
     ylabel('Electricty price [EUR/kWh]')
     xlabel('Time [h_s]')
     grid 

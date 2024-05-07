@@ -57,7 +57,7 @@ while True:
         if(use_high_level_ctrl==True):
             U=optimiser.optimise(simulated_hour, tower_tank_level) #Calculated actuation
             print(U)
-            log.log("U", U, 5)
+            log.log("Solution", U, 5)
 
         next_sample_time  = current_sample_time + c_general["t_s"]     
         sleep_time = next_sample_time - time.time()

@@ -191,8 +191,13 @@ for l = pump1.SolutionTime(1:124)
     [~,idx] = min(abs(consumption_time-l+offset));
     plot(consumption_time(1:idx)/600, movmean(sum_consumption(1:idx),60))
     %Commanded
-    [~,idx] = min(abs(rw_con.DemandTime-l))
-    plot(rw_con.DemandTime(1:idx)/600-offset/600,rw_con.Demand(1:idx))
+    [~,idx] = min(abs(sum_flow_time-l+offset));
+    plot(sum_flow_time(1:idx)/600, movmean(sum_flow(1:idx),60))
+
+
+
+    [~,idx] = min(abs(rw_con.DemandTime-l+offset));
+    plot((rw_con.DemandTime(1:idx))/600,rw_con.Demand(1:idx))
     ylim([0 0.6])
     xlim([(pump1.SolutionTime(1)-offset)/600 (pump1.SolutionTime(1)-offset)/600+100])
     grid
@@ -203,9 +208,9 @@ for l = pump1.SolutionTime(1:124)
 
     fontname(f,"Times")
     drawnow
-    exportgraphics(f,folder+"plot.gif", Append=true)
+    %exportgraphics(f,folder+"plot.gif", Append=true)
     if(i==60)
-        exportgraphics(f,folder+"ADMM_control_prediction.pdf", Append=true) 
+        %exportgraphics(f,folder+"ADMM_control_prediction.pdf", Append=true) 
     end
 end
 

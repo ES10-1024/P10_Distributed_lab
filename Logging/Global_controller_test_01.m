@@ -17,10 +17,10 @@ toc
 save(folder+'05-07_11-24.mat')
 %%
 clear 
-folder = "Logging/Log_files/"
-folder = "C:\Users\pppc\Desktop\Test_data_Lau_lauridsen"
-load(folder+'05-03_13-34.mat')
-
+folder = "C:\Users\laula\OneDrive - Aalborg Universitet\10. semester\Log_files\Global_controller_1\"
+%folder = "C:\Users\pppc\Desktop\Test_data_Lau_lauridsen"
+load(folder+'05-07_11-24.mat')
+folder = "C:\Users\laula\OneDrive - Aalborg Universitet\10. semester\Log_files\Global_controller_1\"
 %% Evaluate valve controller
 clf
 subplot(1,3,1)
@@ -78,96 +78,115 @@ ylabel("Actuation [0-100]")
 
 %Figuring out if the solution is the correct one is a job for Simon
 %I will make a gif ;)
+pump1 = global_con;
+
 f = figure('Position',[10 10 900 600])
+offset=pump1.SolutionTime(1)
 
-sum_flow_time = 1:pump3_ctrl.flowTime(end);
-sum_flow = interp1(pump2_ctrl.flowTime,pump2_ctrl.flow,sum_flow_time) + interp1(pump3_ctrl.flowTime,pump3_ctrl.flow,sum_flow_time);
-sum_flow_command = interp1(pump2_ctrl.refTime,pump2_ctrl.ref, sum_flow_time,'previous') + interp1(pump3_ctrl.refTime,pump3_ctrl.ref,sum_flow_time,'previous');
+sum_flow_time = pump3_ctrl.flowTime(1)-offset:1:pump3_ctrl.flowTime(end)-offset;
+sum_flow = interp1(pump2_ctrl.flowTime-offset,pump2_ctrl.flow,sum_flow_time) + interp1(pump3_ctrl.flowTime-offset,pump3_ctrl.flow,sum_flow_time);
+sum_flow_command = interp1(pump2_ctrl.refTime-offset,pump2_ctrl.ref, sum_flow_time,'previous') + interp1(pump3_ctrl.refTime-offset,pump3_ctrl.ref,sum_flow_time,'previous');
 
-consumption_time = 1:rw_con.Flow_valve1Time(end)
-sum_consumption = interp1(rw_con.Flow_valve1Time,rw_con.Flow_valve1, consumption_time) + interp1(rw_con.Flow_valve2Time,rw_con.Flow_valve2, consumption_time);
+consumption_time = rw_con.Flow_valve1Time(1)-offset:1:rw_con.Flow_valve1Time(end)-offset
+sum_consumption = interp1(rw_con.Flow_valve1Time-offset,rw_con.Flow_valve1, consumption_time) + interp1(rw_con.Flow_valve2Time-offset,rw_con.Flow_valve2, consumption_time);
 
 
 
 i=0;
-for l = pump1.SolutionTime
+offset=pump1.SolutionTime(1)
+for l = pump1.SolutionTime(1:124)
     clf
     i=i+1;
     disp(i)
     
     %Electricity price 
-    subplot(2,2,1)
+    tiledlayout(2,2, "TileSpacing","compact")
     %Prediction
+    nexttile
     pump1.electricity_price(:,i)
-    price_prediction_time = pump1.Simulated_hour(i)*600 + (-1:22)*600;
-    stairs(price_prediction_time/600, pump1.electricity_price(:,i))
+    price_prediction_time = pump1.Simulated_hourTime(i)-offset + (0:23)*600;
+    stairs(price_prediction_time/600, pump1.electricity_price(:,i),'color',"#EDB120")
     hold on
-    stairs(pump1.Simulated_hour(1:i)-1,pump1.electricity_price(1:i,1))
-    ylabel('Electricty price [EUR/kWh]')
-    xlabel('Time [h_s]')
+    %past
+    stairs((pump1.Simulated_hourTime(1:i)-offset)/600,pump1.electricity_price(1,1:i),'Color',	"#77AC30")
+    ylabel('Electricity price [EUR/kWh]')
+    xlabel('Time [h_a]')
     grid 
-    xlim([0 pump1.SolutionTime(end)/600])
+    xlim([(pump1.SolutionTime(1)-offset)/600 (pump1.SolutionTime(1)-offset)/600+100])
     ylim([min(min(squeeze(pump1.electricity_price))) max(max(squeeze(pump1.electricity_price)))])
 
     
    
     %Flow
-    subplot(2,2,2)
+    nexttile
     %Predicted flow
     sum_flow_prediction1 = pump1.Solution(1:2:end,i) + pump1.Solution(2:2:end,i);       %Flow prediction, both pumps based on solution from pump1
-    sum_flow_prediction1_time = pump1.Simulated_hour(i)*600 + (-1:22)*600;
-    stairs(sum_flow_prediction1_time/600,sum_flow_prediction1)
+    sum_flow_prediction1_time = pump1.Simulated_hourTime(i)-offset + (0:23)*600;
+    
+    stairs(sum_flow_prediction1_time/600,sum_flow_prediction1, 'Color',"#EDB120")
     hold on
     %Past flow
-    [~,idx] = min(abs(sum_flow_time-l));
-    plot(sum_flow_time(1:idx)/600, movmean(sum_flow(1:idx),60))
+    [~,idx] = min(abs(sum_flow_time-l+offset));
+    plot(sum_flow_time(1:idx)/600, movmean(sum_flow(1:idx),60), 'Color',	"#7E2F8E")
     %Past commands
-    [~,idx] = min(abs(sum_flow_time-l));
-    plot(sum_flow_time(1:idx)/600, sum_flow_command(1:idx))
-    ylabel('Sum of flow [m^3/h_s]')
-    xlabel('Time [h_s]')
+    [~,idx] = min(abs(sum_flow_time-l+offset));
+    plot(sum_flow_time(1:idx)/600, sum_flow_command(1:idx), 'color', "#77AC30")
+    ylabel('Sum of flows [m^3/h]')
+    xlabel('Time [h_a]')
     ylim([0 0.6])
-    xlim([0 pump1.SolutionTime(end)/600])
+    xlim([(pump1.SolutionTime(1)-offset)/600 (pump1.SolutionTime(1)-offset)/600+100])
+    grid
     
 
     %Volume in tower
-    subplot(2,2,3)
+    nexttile
     %Prediction
     inflow_volume = cumsum(sum_flow_prediction1)*1/6*1000;    %1/6 is time acceleration *1000 is m^3 to L
-    outflow_volume = cumsum(pump1.demand_pred(:,i))*1/6*1000;
-    tower_volume = pump1.tower_tank_level(i)*0.283 + inflow_volume - outflow_volume;
-    tower_volume = [pump1.tower_tank_level(i)*0.283; tower_volume];
-    sum_flow_prediction1_time = pump1.Simulated_hour(i)*600 + (-1:23)*600;
-    plot(sum_flow_prediction1_time/600,tower_volume)
+    outflow_volume1 = cumsum(pump1.demand_pred(:,i))*1/6*1000;
+    tower_volume1 = pump1.tower_tank_level(i)*0.283 + inflow_volume - outflow_volume1;
+    tower_volume1 = [pump1.tower_tank_level(i)*0.283; tower_volume1];
+    sum_flow_prediction1_time = pump1.Simulated_hourTime(i)-offset + (0:24)*600;
+
+    plot(sum_flow_prediction1_time/600,tower_volume1, 'color', 	"#EDB120")
     hold on
     %Past
     [~,idx] = min(abs(rw_con.tank_tower_mmTime-l));
-    plot(rw_con.tank_tower_mmTime(1:idx)/600,rw_con.tank_tower_mm(1:idx)*0.283)
+    plot((rw_con.tank_tower_mmTime(1:idx)-offset)/600,rw_con.tank_tower_mm(1:idx)*0.283, 'Color',	"#7E2F8E")
     yline(28)
     yline(155)
     ylabel("Volume in tower [L]")
-    xlabel('Time [h_s]')
+    xlabel('Time [h_a]')
     ylim([20 170])
-    xlim([0 pump1.SolutionTime(end)/600])
+    xlim([(pump1.SolutionTime(1)-offset)/600 (pump1.SolutionTime(1)-offset)/600+100])
+    grid 
 
     %Demand
-    subplot(2,2,4)
+    nexttile
     %Prediction
-    stairs(price_prediction_time/600, pump1.demand_pred(:,i))
+    stairs(price_prediction_time/600, pump1.demand_pred(:,i), 'Color',"#EDB120")
     hold on
+    %stairs(price_prediction_time/600, pump1.demand_pred(:,i))
+    %stairs(price_prediction_time/600, pump1.demand_pred(:,i))
     %Flow
-    [~,idx] = min(abs(consumption_time-l));
-    plot(consumption_time(1:idx)/600, movmean(sum_consumption(1:idx),1))
+    [~,idx] = min(abs(consumption_time-l+offset));
+    plot(consumption_time(1:idx)/600, movmean(sum_consumption(1:idx),60), 'Color',	"#7E2F8E")
     %Commanded
-    [~,idx] = min(abs(rw_con.DemandTime-l));
-    plot(rw_con.DemandTime(1:idx)/600,rw_con.Demand(1:idx))
+    [~,idx] = min(abs(rw_con.DemandTime-l))
+    plot(rw_con.DemandTime(1:idx)/600-offset/600,rw_con.Demand(1:idx),'Color',	"#77AC30")
     ylim([0 0.6])
-    xlim([0 pump1.SolutionTime(end)/600])
+    xlim([(pump1.SolutionTime(1)-offset)/600 (pump1.SolutionTime(1)-offset)/600+100])
+    grid
+    legend("Prediction", "Measured", "Commanded", Location="northwest")
+    ylabel('Consumption [m^3/h]')
+    xlabel('Time [h_a]')
     
 
-
+    fontname(f,"Times")
     drawnow
-    pause(0.3)
+    exportgraphics(f,folder+"plot.gif", Append=true)
+    if(i==80)
+        exportgraphics(f,folder+"Global_control_prediction.pdf", Append=true) 
+    end
 end
 
 

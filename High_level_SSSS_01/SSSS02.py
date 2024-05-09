@@ -57,8 +57,8 @@ class SSSS:
             self.conn1.sendall(b1x2.tobytes())  #Distribute share vectors to the rest of the stakeholders: 
             self.conn2.sendall(b1x3.tobytes())
             
-            b2x1 = np.frombuffer(self.conn1.recv(8*48), dtype=b1x1.dtype) #Receiving share vectors the others: 
-            b3x1 = np.frombuffer(self.conn2.recv(8*48), dtype=b1x1.dtype)
+            b2x1 = np.frombuffer(self.conn1.recv(8*secret.shape[0]), dtype=b1x1.dtype) #Receiving share vectors the others: 
+            b3x1 = np.frombuffer(self.conn2.recv(8*secret.shape[0]), dtype=b1x1.dtype)
             
             b1x1 = b1x1.reshape(-1, 1)  #Reshape to on column unknown number of entries
             b2x1 = b2x1.reshape(-1, 1)
@@ -70,8 +70,8 @@ class SSSS:
             self.conn1.sendall(b1.tobytes())  #Distribute sum of shares
             self.conn2.sendall(b1.tobytes())
             
-            b2 = np.frombuffer(self.conn1.recv(8*48), dtype=b1.dtype) #Recive sum of shares
-            b3 = np.frombuffer(self.conn2.recv(8*48), dtype=b1.dtype)
+            b2 = np.frombuffer(self.conn1.recv(8*secret.shape[0]), dtype=b1.dtype) #Recive sum of shares
+            b3 = np.frombuffer(self.conn2.recv(8*secret.shape[0]), dtype=b1.dtype)
             
             b1= b1.reshape(-1, 1)  
             b2= b2.reshape(-1, 1)
@@ -85,8 +85,8 @@ class SSSS:
             self.conn1.sendall(b2x1.tobytes())  
             self.conn2.sendall(b2x3.tobytes())
             
-            b1x2 = np.frombuffer(self.conn1.recv(8*48), dtype=b2x1.dtype) 
-            b3x2 = np.frombuffer(self.conn2.recv(8*48), dtype=b2x1.dtype)
+            b1x2 = np.frombuffer(self.conn1.recv(8*secret.shape[0]), dtype=b2x1.dtype) 
+            b3x2 = np.frombuffer(self.conn2.recv(8*secret.shape[0]), dtype=b2x1.dtype)
             
             b1x2 = b1x2.reshape(-1, 1)
             b2x2 = b2x2.reshape(-1, 1)
@@ -98,8 +98,8 @@ class SSSS:
             self.conn1.sendall(b2.tobytes())  
             self.conn2.sendall(b2.tobytes())
             
-            b1 = np.frombuffer(self.conn1.recv(8*48), dtype=b2.dtype)
-            b3 = np.frombuffer(self.conn2.recv(8*48), dtype=b2.dtype)
+            b1 = np.frombuffer(self.conn1.recv(8*secret.shape[0]), dtype=b2.dtype)
+            b3 = np.frombuffer(self.conn2.recv(8*secret.shape[0]), dtype=b2.dtype)
             
             b1 = b1.reshape(-1, 1)
             b2 = b2.reshape(-1, 1)
@@ -113,8 +113,8 @@ class SSSS:
             self.conn1.sendall(b3x1.tobytes())  
             self.conn2.sendall(b3x2.tobytes())
         
-            b1x3 = np.frombuffer(self.conn1.recv(8*48), dtype=b3x1.dtype) 
-            b2x3 = np.frombuffer(self.conn2.recv(8*48), dtype=b3x1.dtype)
+            b1x3 = np.frombuffer(self.conn1.recv(8*secret.shape[0]), dtype=b3x1.dtype) 
+            b2x3 = np.frombuffer(self.conn2.recv(8*secret.shape[0]), dtype=b3x1.dtype)
         
             b1x3 = b1x3.reshape(-1, 1)
             b2x3 = b2x3.reshape(-1, 1)
@@ -126,8 +126,8 @@ class SSSS:
             self.conn1.sendall(b3.tobytes())  
             self.conn2.sendall(b3.tobytes())
         
-            b1 = np.frombuffer(self.conn1.recv(8*48), dtype=b3.dtype) # Receive other z_i's
-            b2 = np.frombuffer(self.conn2.recv(8*48), dtype=b3.dtype)
+            b1 = np.frombuffer(self.conn1.recv(8*secret.shape[0]), dtype=b3.dtype) # Receive other z_i's
+            b2 = np.frombuffer(self.conn2.recv(8*secret.shape[0]), dtype=b3.dtype)
         
             b1 = b1.reshape(-1, 1)
             b2 = b2.reshape(-1, 1)

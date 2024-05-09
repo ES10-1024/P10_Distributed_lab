@@ -29,7 +29,7 @@ class logging:
                     
      # Writing data to the class              
     def log(self, ID, data, n_decimals):
-         data=[ID,np.round(data, n_decimals),np.round(time.time()-self.init_time,3)]
+         data=[ID, np.round(data, n_decimals), np.round(time.time()-self.init_time,3)]
         
          with open(self.filename, 'a', newline='') as csv_file:
             csv_writer = csv.writer(csv_file)

@@ -70,13 +70,13 @@ class ADMM_optimiser_WDN:
                 self.r_i = np.linalg.norm(self.x_i - self.x_bar, 2)**2
                 
                 self.r_norm_squared =  self.smpc_summer.sum(self.r_i)
-                self.s_norm = self.N_s*self.rho**2*np.linalg.norm(self.x_bar - self.x_bar_old,2)
+                self.s_norm = self.N_s*self.rho**2*np.linalg.norm(self.x_bar - self.x_bar_old,2)**2
                 self.log.log("r_norm_squred", self.r_norm_squared, 3)
                 self.log.log("s_norm", self.s_norm, 3)
 
-                if(np.sqrt(self.r_norm_squared)>self.mu*self.s_norm):
+                if(np.sqrt(self.r_norm_squared)>self.mu*np.sqrt(self.s_norm)):
                     self.rho = self.rho * self.tau
-                elif(self.s_norm > self.mu*np.sqrt(self.r_norm_squared)):
+                elif(np.sqrt(self.s_norm) > self.mu*np.sqrt(self.r_norm_squared)):
                     self.rho = self.rho / self.tau
                 print("rho: ", self.rho)
                 self.log.log("rho", self.rho, 2)

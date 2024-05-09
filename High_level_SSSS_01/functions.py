@@ -23,7 +23,7 @@ class ADMM_optimiser_WDN:
         self.z=np.zeros((self.N_c*self.N_q,1)) #Initialization ADMM
         self.log = logging("ADMM"+str(stakeholder))
 
-        self.smpc_summer = SSSS(self.conn1, self.conn1, stakeholder, self.log)
+        self.smpc_summer = SSSS(self.conn1, self.conn2, stakeholder, self.log)
 
     def optimise(self, hour : int , water_height: float):
         self.lambda_i = np.zeros((self.N_c*self.N_q,1)) #ADMM Initialisation

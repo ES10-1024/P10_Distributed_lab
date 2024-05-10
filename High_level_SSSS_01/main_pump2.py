@@ -81,6 +81,8 @@ if __name__ == '__main__':
         sleep_time = next_sample_time - time.time()
         if sleep_time>0:  
             time.sleep(sleep_time)
+        else:
+            log.log("High level controller can not keep up with sampling time", 1, 1)
         simulated_hour = simulated_hour + 1
         current_sample_time = time.time()
         

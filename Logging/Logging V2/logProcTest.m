@@ -1,9 +1,34 @@
-function [log] = logProc(data,IDLabels,groupNumber) 
+
+%% 
+clear 
+clc 
+clf 
+close all 
+
 %% Function to pick out the desired IDs from the log file 
 %Input filename, the file it is desired to work with, including .csv! 
 %IDlabels for the matrix to be create 
 %groupNumber, tells which ID is present i which row 
 %Output log, returns a struct with the data and sampling time
+addpath('C:\Users\is123\Downloads\OneDrive_1_10.5.2024')
+filename='ADMM1_05-09_12-54-40.csv'; 
+
+
+
+%% 
+opts = detectImportOptions(filename);
+
+opts.VariableTypes = {'string', 'string', 'double'}; 
+
+data = readtable(filename, opts);
+
+% Creating names for the matrices
+[IDLabels, ~,groupNumber] =unique(data.ID); 
+
+%Replacing space with _ in naming
+for i = 1:numel(IDLabels)
+    IDLabels{i} = strrep(IDLabels{i}, ' ', '_');
+end
 %% Creating empty matrices for each ID  
 for i = 1:numel(IDLabels)
     eval([IDLabels{i} ' = [];']);
@@ -30,7 +55,6 @@ end
         % empty matrix save the data) 
         if isnan(dataWork) == 0 && isempty(dataWork) == 0
             eval([current_var_name ' = [' current_var_name ', dataWork];'])
-            eval([current_var_name_Time ' = [' current_var_name_Time ', data.Time(index)];']);
         else 
             % Replace 'e-' with 'e-'
             str = strrep(data.Data(index), 'e-', 'e-');
@@ -81,16 +105,6 @@ for matrixNumber = 1:numel(IDLabels)
     current_var_name_Time = IDLabelsTime{matrixNumber};
     log.(current_var_name)=eval(current_var_name); 
     log.(current_var_name_Time)=eval(current_var_name_Time); 
-    
-    new_var_name = [current_var_name '2'];
-    new_var_name_Time = [current_var_name_Time '2'];
-     
-    % Check if new_var_name exists before evaluating and saving it
-    if ~isempty(eval(new_var_name))
-        log.(new_var_name) = eval(new_var_name); 
-        log.(new_var_name_Time) = eval(new_var_name_Time); 
-    end
-     
 end 
 
 % % % % %% Setting the start time to zero, by finding the minimum timestamp
@@ -131,7 +145,4 @@ end
 % % % %     log.(current_var_name_Time)=eval(current_var_name_Time); 
 % % % % end 
 
-
-
-end
 

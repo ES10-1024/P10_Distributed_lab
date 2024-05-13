@@ -10,7 +10,7 @@ close all
 %IDlabels for the matrix to be create 
 %groupNumber, tells which ID is present i which row 
 %Output log, returns a struct with the data and sampling time
-addpath('C:\Users\is123\Downloads\OneDrive_1_10.5.2024')
+addpath('C:\Users\is123\Downloads\Distributed_system_3\Distributed_system_3')
 filename='ADMM1_05-09_12-54-40.csv'; 
 
 

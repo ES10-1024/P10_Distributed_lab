@@ -51,7 +51,7 @@ if __name__ == '__main__':
         conn_pump2, addr_pump1 = s_pump2.accept()
         print("Connected to pump 2, all TCP connections setup")
 
-        optimiser = ADMM_optimiser_WDN(s_tower, conn_pump2, 2)
+        optimiser = ADMM_optimiser_WDN(s_tower, conn_pump2,125, 10, 2)
         
     
     simulated_hour = 1
@@ -85,8 +85,6 @@ if __name__ == '__main__':
         sleep_time = next_sample_time - time.time()
         if sleep_time>0:  
             time.sleep(sleep_time)
-        else:
-            log.log("High level controller can not keep up with sampling time", 1, 1)
         simulated_hour = simulated_hour + 1
         current_sample_time = time.time()
         

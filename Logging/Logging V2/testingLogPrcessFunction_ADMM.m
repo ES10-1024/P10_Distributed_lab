@@ -6,7 +6,7 @@ close all
 %%
 
 %% 
-addpath('C:\Users\is123\Downloads\OneDrive_1_10.5.2024')
+addpath('C:\Users\is123\Downloads\Distributed_system_3\Distributed_system_3')
 
 %% Testing the logProcess function 
 tic

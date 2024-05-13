@@ -23,10 +23,9 @@ toc
 save(folder+'05-09_12-54.mat')
 %%
 clear 
-folder = "C:\Users\pppc\Desktop\Test_data_Lau_lauridsen"
-folder = "C:\Users\laula\OneDrive - Aalborg Universitet\10. semester\Log_files\Distributed_system_1\"
-load(folder+'05-03_13-34.mat')
-folder = "C:\Users\laula\OneDrive - Aalborg Universitet\10. semester\Log_files\Distributed_system_1\"
+folder = "C:\Users\laula\OneDrive - Aalborg Universitet\10. semester\Log_files\Distributed_system_2\"
+load(folder+'05-09_12-53.mat')
+folder = "C:\Users\laula\OneDrive - Aalborg Universitet\10. semester\Log_files\Distributed_system_2\"
 %% Evaluate valve controller
 clf
 subplot(1,3,1)
@@ -97,7 +96,7 @@ sum_consumption = interp1(rw_con.Flow_valve1Time-offset,rw_con.Flow_valve1, cons
 
 i=0;
 offset=pump1.SolutionTime(1)
-for l = pump1.SolutionTime(1:124)
+for l = pump1.SolutionTime(1:119)
     clf
     i=i+1;
     disp(i)
@@ -127,8 +126,8 @@ for l = pump1.SolutionTime(1:124)
     sum_flow_prediction1_time = pump1.Simulated_hourTime(i)-offset + (0:23)*600;
     sum_flow_prediction2 = pump2.Solution(1:2:end,i) + pump2.Solution(2:2:end,i);       %Flow prediction, both pumps based on solution from pump1
     sum_flow_prediction2_time = pump2.Simulated_hourTime(i)-offset + (0:23)*600;
-    sum_flow_prediction3 = tow.U(1:2:end,i) + tow.U(2:2:end,i);       %Flow prediction, both pumps based on solution from pump1
-    sum_flow_prediction3_time = tow.simulated_hourTime(i)-offset + (0:23)*600;
+    sum_flow_prediction3 = tow.Solution(1:2:end,i) + tow.Solution(2:2:end,i);       %Flow prediction, both pumps based on solution from pump1
+    sum_flow_prediction3_time = tow.Simulated_hourTime(i)-offset + (0:23)*600;
     stairs(sum_flow_prediction1_time/600,sum_flow_prediction1)
     hold on
     stairs(sum_flow_prediction2_time/600,sum_flow_prediction2)
@@ -163,7 +162,7 @@ for l = pump1.SolutionTime(1:124)
     outflow_volume3 = cumsum(pump2.demand_pred(:,i))*1/6*1000;
     tower_volume3 = pump2.tower_tank_level(i)*0.283 + inflow_volume - outflow_volume3;
     tower_volume3 = [pump2.tower_tank_level(i)*0.283; tower_volume3];
-    sum_flow_prediction3_time = tow.simulated_hourTime(i)-offset + (0:24)*600;
+    sum_flow_prediction3_time = tow.Simulated_hourTime(i)-offset + (0:24)*600;
 
     plot(sum_flow_prediction1_time/600,tower_volume1)
     hold on
@@ -204,8 +203,8 @@ for l = pump1.SolutionTime(1:124)
     fontname(f,"Times")
     drawnow
     exportgraphics(f,folder+"plot.gif", Append=true)
-    if(i==60)
-        exportgraphics(f,folder+"ADMM_control_prediction.pdf", Append=true) 
+    if(i==80)
+        exportgraphics(f,folder+"ADMM_control_prediction1.pdf", Append=true) 
     end
 end
 

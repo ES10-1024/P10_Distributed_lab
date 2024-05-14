@@ -101,11 +101,11 @@ class ADMM_optimiser_WDN:
                 
             ###### Stopping criteria ######
             #One iteration prior to running the stopping criteria, calculte x_bar_old
-            if k >= self.stop_criterion_start - 5 and k % 5 == 4:
+            if k >= self.stop_criterion_start - 1 and k % self.n_iteration_stop_criteria == self.n_iteration_stop_criteria-1:
                 self.x_bar_old = 1/self.N_s*self.smpc_summer.sum(self.x_i)
                 
             #Checking if it is time to stop       
-            if k >= self.stop_criterion_start and k % 5 == 0:
+            if k >= self.stop_criterion_start and k % self.n_iteration_stop_criteria == 0:
                 self.log.log("stoppingCriterionCheck", 1, 3)
                 self.x_bar = 1/self.N_s*self.smpc_summer.sum(self.x_i)
                 

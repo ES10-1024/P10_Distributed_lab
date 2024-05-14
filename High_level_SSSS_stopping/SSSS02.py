@@ -39,7 +39,7 @@ class SSSS:
 
         for row in range(n_rows):           #Loop over the rows in the sum
             sum[row] = (delta @ summed_shares[:,row]) % self.Beta        #Calculate entry in sum @ is matrix product, % is modulo
-            sum[row] = (sum[row]-(self.N_s*self.scaling))/self.scaling    #Cast back into float
+            sum[row] = (sum[row]-(self.offset*self.N_s*self.scaling))/self.scaling    #Cast back into float
         return sum
     
     #Make calculation of sum. Function includes networking

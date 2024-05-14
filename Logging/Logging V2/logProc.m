@@ -45,7 +45,9 @@ end
                     size(numeric_values, 2) ~= 24 && ...
                     size(numeric_values, 2) ~= 48) 
                     %Getting the data another way!
-                     numeric_values = regexp(data.Data(index), '[-+]?\d*\.?\d+', 'match');
+                    %numeric_values = regexp(data.Data(index), '[-+]?\d*\.?\d+e[-+]\d+', 'match');
+                    numeric_values = regexp(data.Data(index), '[-+]?\d+\.?\d+e[-+]\d+', 'match');
+                     %numeric_values = regexp(data.Data(index), '[-+]?\d*\.?\d+', 'match');
                     %numeric_values = regexp(data.Data(index), '[-+]?\d*\.\d?', 'match');
             end 
             %If convter data from string and save it 

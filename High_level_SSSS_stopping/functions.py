@@ -72,7 +72,7 @@ class ADMM_optimiser_WDN:
             self.log.log("lambda_i", self.lambda_i, 5)       
             ### END ADMM 
             
-            ### BEGIN find rho
+           ### BEGIN find rho
             if(k<=self.N_vary_rho):
                 self.x_bar_old = self.x_bar
                 self.x_bar = 1/self.N_s*self.smpc_summer.sum(self.x_i)
@@ -90,8 +90,8 @@ class ADMM_optimiser_WDN:
                     self.rho = self.rho / self.tau
                 print("rho: ", self.rho)
                 self.log.log("rho", self.rho, 2)
-            ### End find rho
-
+                 ### End find rho
+                
             #Increase rho with factor 500 at iteration 30
             if(k==30):
                 self.rho_last_solve = self.rho
@@ -119,9 +119,7 @@ class ADMM_optimiser_WDN:
                 self.log.log("s_norm", self.s_norm, 5)
                 #Checking if stopping criteria is fulfilled
                 if self.r_norm <= self.epsilon_pri and self.s_norm <= self.epsilon_dual:
-                    return self.x_i       #return solution, escape function
-            
-            
+                    return self.x_i       #return solution, escape function           
         return self.x_i     #More than max number of iterations, return current solution
                  
         

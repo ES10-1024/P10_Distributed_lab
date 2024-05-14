@@ -52,7 +52,6 @@ class SSSS:
             b1x1 = shares[0,:]   #Pick share vectors
             b1x2 = shares[1,:]
             b1x3 = shares[2,:]
-            self.log.log("Own shares", shares, 1)
 
             self.conn1.sendall(b1x2.tobytes())  #Distribute share vectors to the rest of the stakeholders: 
             self.conn2.sendall(b1x3.tobytes())
@@ -65,7 +64,6 @@ class SSSS:
             b3x1 = b3x1.reshape(-1, 1)
             
             b1 = b1x1 + b2x1 + b3x1   #Sum the received shares
-            self.log.log("Sum of recived shares", b1, 1)
             
             self.conn1.sendall(b1.tobytes())  #Distribute sum of shares
             self.conn2.sendall(b1.tobytes())
@@ -93,7 +91,6 @@ class SSSS:
             b3x2 = b3x2.reshape(-1, 1)
             
             b2 = b1x2 + b2x2 + b3x2
-            self.log.log("Sum of recived shares", b2, 1)
             
             self.conn1.sendall(b2.tobytes())  
             self.conn2.sendall(b2.tobytes())
@@ -121,7 +118,6 @@ class SSSS:
             b3x3 = b3x3.reshape(-1, 1)
 
             b3 = b1x3 + b2x3 + b3x3 
-            self.log.log("Sum of recived shares", b3, 1)
 
             self.conn1.sendall(b3.tobytes())  
             self.conn2.sendall(b3.tobytes())
@@ -136,8 +132,6 @@ class SSSS:
         
         summed_share_matrix = np.vstack((b1.T,b2.T,b3.T))   #Make matrix of the received sum of shares
         sum = self.get_sum(summed_share_matrix)             #Calculate sum based on shares 
-        self.log.log("summed share matrix", summed_share_matrix,1)
-        self.log.log("sum", sum, 1)
         
         return  sum
     

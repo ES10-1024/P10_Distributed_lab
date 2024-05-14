@@ -32,7 +32,7 @@ if __name__ == '__main__':
         MB_tower = ModbusClient(host = settings_pump2['ip_tower'], port = 502, auto_open = True)    #Connection to read water level in tower
 
     if(use_high_level_ctrl==True):
-        #Set up connecion to tower as client
+        #Set up connection to tower as client
         tower_IP = '192.168.100.32'
         tower_IP = "127.0.0.1"
         port_tower_pump2 = 5401
@@ -40,7 +40,7 @@ if __name__ == '__main__':
         s_tower.connect((tower_IP, port_tower_pump2))
         print("Connected to tower")
 
-        #Set up connecion to pump 2 as client
+        #Set up connection to pump 2 as client
         pump1_IP = '192.168.100.144'
         pump1_IP = "127.0.0.2"
         port_pump1_pump2 = 5402

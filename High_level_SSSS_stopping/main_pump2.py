@@ -25,7 +25,7 @@ if __name__ == '__main__':
     if(use_low_level_ctrl==True):    
         ll_reference_queue = multiprocessing.Queue(1)      #Make queue with one spot
         ll_reference_queue.put(0)                          #Set reference to zero
-        low_level_control_process = multiprocessing.Process(target = low_level_controller,args = (settings_pump2,ll_reference_queue, 3, ))
+        low_level_control_process = multiprocessing.Process(target = low_level_controller, args = (settings_pump2, ll_reference_queue, 3, ))
         low_level_control_process.start() 
         print("Low level controller started")
 
@@ -44,7 +44,7 @@ if __name__ == '__main__':
         pump1_IP = '192.168.100.144'
         pump1_IP = "127.0.0.2"
         port_pump1_pump2 = 5402
-        s_pump1= socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s_pump1 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s_pump1.connect((pump1_IP,port_pump1_pump2))
         print("Connected to pump 2, all TCP connecttions set up")
         
@@ -57,13 +57,13 @@ if __name__ == '__main__':
         print("Simulated hour:", simulated_hour)
         log.log("Simulated_hour", simulated_hour, 1)
 
-        if(use_low_level_ctrl==True):
+        if(use_low_level_ctrl == True):
               tower_tank_level = MB_tower.read_input_registers(settings_pump2['register_tower_tank'], 1)[0]     #Read water level in tower [mm]
         else:
              tower_tank_level = 200
         log.log("tower_tank_level", tower_tank_level, 1)
 
-        if(use_high_level_ctrl==True):
+        if(use_high_level_ctrl == True):
             U=optimiser.optimise(simulated_hour, tower_tank_level) #Calculated actuation
             print(U)
             log.log("Solution", U, 5)
@@ -72,14 +72,14 @@ if __name__ == '__main__':
             log.log("electricity_price", electricity_price, 2)
             flow_pump = U.item(1)
         else:
-            flow_pump =  random.uniform(0,0.3)
+            flow_pump = random.uniform(0,0.3)
 
-        if(use_low_level_ctrl==True):
+        if(use_low_level_ctrl == True):
             ll_reference_queue.put(flow_pump)   #Send command to low level controller
 
         next_sample_time  = current_sample_time + c_general["t_s"]     
         sleep_time = next_sample_time - time.time()
-        if sleep_time>0:  
+        if sleep_time > 0:  
             time.sleep(sleep_time)
         simulated_hour = simulated_hour + 1
         current_sample_time = time.time()

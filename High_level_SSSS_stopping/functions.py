@@ -21,7 +21,6 @@ class ADMM_optimiser_WDN:
         self.N_c = 24   #Control horizon
         self.N_s = 3    #Number of stakeholders
         self.N_q = 2    #number of pumps
-        self.under_relaxation=False # Using under relaxation
         
         self.rho = 1      #Initial rho
         self.rho_last_solve = self.rho
@@ -48,7 +47,7 @@ class ADMM_optimiser_WDN:
 
         k = 0       # Iteration number
     
-        while k < self.maxIterations:
+        while k < self.max_iterations:
             k = k+1 #Increase the iteration count
             print("Iteration", k)
             self.log.log("k", k,1)

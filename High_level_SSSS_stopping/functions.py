@@ -9,50 +9,50 @@ class ADMM_optimiser_WDN:
         self.conn2 = conn2      #TCP connection
         self.N_vary_rho = 10       #Number of iterations with varying rho
         self.stakeholder = stakeholder      #My stakeholder id
-        #self.N_iterations = N_iterations    #Number of ADMM iterations
+        
         #Stopping criteria
-        self.maxIterations = 500        #Maximum number of iterations  
-        self.stopCriterionStart = 35    #When we start checking the stopping critera 
-        self.betweenStopCheck = 5       #Iterations between checking stopping critera 
-        self.epsilonPri = 0.07          #Value the primal residual needs to be under
-        self.epsilonDual = 0.06         #Value the dual residual needs to be under
+        self.max_iterations = 500           #Maximum number of iterations  
+        self.stop_criterion_start = 35      #When we start checking the stopping criteria
+        self.n_iteration_stop_criteria = 5  #Run stopping criteria every xx iteration    
+        self.between_stop_check = 5         #Iterations between checking stopping criteria 
+        self.epsilon_pri = 0.07             #Value the primal residual needs to be under
+        self.epsilon_dual = 0.06            #Value the dual residual needs to be under
         
         self.N_c = 24   #Control horizon
         self.N_s = 3    #Number of stakeholders
         self.N_q = 2    #number of pumps
         self.under_relaxation=False # Using under relaxation
         
-        self.rho = 1      #Initial
+        self.rho = 1      #Initial rho
         self.rho_last_solve = self.rho
         self.mu = 5       #Vary rho algorithm parameter
         self.tau = 1.5    #Vary rho algorithm parameter
 
-        self.z=np.zeros((self.N_c*self.N_q,1)) #Initialization ADMM
-        self.log = logging("ADMM"+str(stakeholder))
+        self.z=np.zeros((self.N_c*self.N_q, 1)) #Initialization ADMM
+        self.log = logging("ADMM" + str(stakeholder))
 
         self.smpc_summer = SSSS(self.conn1, self.conn2, stakeholder, self.log)
 
     def optimise(self, hour : int , water_height: float):
-        self.lambda_i = np.zeros((self.N_c*self.N_q,1)) #ADMM Initialisation
-        self.x_bar = np.zeros((self.N_c*self.N_q,1)) #ADMM Initialisation
+        self.lambda_i = np.zeros((self.N_c*self.N_q, 1))    #ADMM Initialisation
+        self.x_bar = np.zeros((self.N_c*self.N_q, 1))       #ADMM Initialisation
         
         #Timeshift initial guess
-        self.z = np.roll(self.z,1)
+        self.z = np.roll(self.z, 1)
         self.z[-1] = self.z[-2]  
 
         self.rho = self.rho_last_solve
 
         self.log.log("simulated_hour", hour, 1)
-        self.log.log("water_height", water_height,1)  
+        self.log.log("water_height", water_height, 1)  
 
-        #Resting before solving the problem 
-        stopCriterion = False  
-        k = 1
-        startXbar = self.stopCriterionStart - 1
-        #Solve problem
-        while not stopCriterion and k < self.maxIterations:
+        k = 0       # Iteration number
+    
+        while k < self.maxIterations:
+            k = k+1 #Increase the iteration count
             print("Iteration", k)
             self.log.log("k", k,1)
+
             #Solve local problem
             try: 
                 self.x_i = performOptimisation(hour, water_height, self.stakeholder,self.rho,self.lambda_i,self.z)
@@ -100,13 +100,12 @@ class ADMM_optimiser_WDN:
                 
                 
             ###### Stopping criteria ######
-            #Determine xbar one iteration before checking stopping critera
-            if (k == startXbar):
+            #One iteration prior to running the stopping criteria, calculte x_bar_old
+            if k >= self.stop_criterion_start - 5 and k % 5 == 4:
                 self.x_bar_old = 1/self.N_s*self.smpc_summer.sum(self.x_i)
-                startXbar=startXbar+self.betweenStopCheck
                 
             #Checking if it is time to stop       
-            if k >= 35 and (self.stopCriterionStart) % 5 == 0:
+            if k >= self.stop_criterion_start and k % 5 == 0:
                 self.log.log("stoppingCriterionCheck", 1, 3)
                 self.x_bar = 1/self.N_s*self.smpc_summer.sum(self.x_i)
                 
@@ -120,15 +119,13 @@ class ADMM_optimiser_WDN:
                 self.log.log("r_norm", self.r_norm, 5)
                 self.log.log("s_norm", self.s_norm, 5)
                 #Checking if stopping criteria is fulfilled
-                if self.r_norm <= self.epsilonPri and self.s_norm <= self.epsilonDual:
-                    stopCriterion=True 
-
-                
+                if self.r_norm <= self.epsilon_pri and self.s_norm <= self.epsilon_dual:
+                    return self.x_i       #return solution, escape function
             
-            #One up on the iterations count
-            k+=1 
+            
+        return self.x_i     #More than max number of iterations, return current solution
                  
-        return self.x_i       #return solution
+        
     
 
 

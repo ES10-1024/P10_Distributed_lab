@@ -39,7 +39,7 @@ if(use_high_level_ctrl):
         conn_pump2, addr_pump2 = s_pump2.accept()
         print("Connected to pump 2, all TCP connections setup")
 
-        optimiser = ADMM_optimiser_WDN(conn_pump1, conn_pump2,125, 10, 1)
+        optimiser = ADMM_optimiser_WDN(conn_pump1, conn_pump2, 1)
 
 
 simulated_hour = 1

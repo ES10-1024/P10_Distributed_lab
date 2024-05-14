@@ -51,7 +51,7 @@ if __name__ == '__main__':
         conn_pump2, addr_pump1 = s_pump2.accept()
         print("Connected to pump 2, all TCP connections setup")
 
-        optimiser = ADMM_optimiser_WDN(s_tower, conn_pump2,125, 10, 2)
+        optimiser = ADMM_optimiser_WDN(s_tower, conn_pump2, 2)
         
     
     simulated_hour = 1

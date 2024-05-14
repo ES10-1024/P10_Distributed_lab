@@ -48,7 +48,7 @@ if __name__ == '__main__':
         s_pump1.connect((pump1_IP,port_pump1_pump2))
         print("Connected to pump 2, all TCP connecttions set up")
         
-        optimiser = ADMM_optimiser_WDN(s_tower, s_pump1, 3)
+        optimiser = ADMM_optimiser_WDN(s_tower, s_pump1,125, 10, 3)
     
     simulated_hour = 1
     current_sample_time = time.time()

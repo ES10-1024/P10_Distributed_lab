@@ -39,7 +39,7 @@ log  = logging("return_and_consumer_valve_ctrl")
 try:
     while True: 
         #Perform return water control
-        tank_consumer = MB_cons.read_input_registers(settings_consumer['register_tank'],1)[0]
+        tank_consumer = MB_cons.read_input_registers(settings_consumer['register_tank'], 1)[0]
         tank_pump1 = MB_pump1.read_input_registers(settings_pump1['register_pump_tank'], 1)[0]
         tank_pump2 = MB_pump2.read_input_registers(settings_pump2['register_pump_tank'], 1)[0]
         tank_tower = MB_tower.read_input_registers(settings_pump1['register_tower_tank'], 1)[0]
@@ -48,8 +48,8 @@ try:
         log.log("tank_pump2_mm", tank_pump2, 1)
         log.log("tank_tower_mm", tank_tower, 1)
 
-        MB_cons.write_single_register(3,10000)    #Open bottom valve
-        MB_tower.write_single_register(3,10000)   #Open bottom valve
+        MB_cons.write_single_register(3, 10000)    #Open bottom valve
+        MB_tower.write_single_register(3, 10000)   #Open bottom valve
 
 
         if(tank_consumer > tank_consumer_max):           #Set both aux pumps max power
@@ -124,16 +124,16 @@ try:
         time.sleep(1)
 
 except Exception as error:
-    MB_pump1.write_single_register(8, 0)
+    MB_pump1.write_single_register(8, 0)   #Turn off pumps
     MB_pump1.write_single_register(9, 0)
     MB_pump2.write_single_register(8, 0)
     MB_pump2.write_single_register(9, 0)
 
-    MB_cons.write_single_register(3,0)    #Close bottom valve 
-    MB_tower.write_single_register(3,0)   #Close bottom valve 
+    MB_cons.write_single_register(3, 0)    #Close bottom valve 
+    MB_tower.write_single_register(3, 0)   #Close bottom valve 
   
-    MB_cons.write_single_register(1,0)    #Open top valve
-    MB_cons.write_single_register(2,0)    #Open top valve
+    MB_cons.write_single_register(1, 0)    #Open top valve
+    MB_cons.write_single_register(2, 0)    #Open top valve
 
     print("Pumps turned off and valves closed due to exception")
 
@@ -141,16 +141,16 @@ except Exception as error:
     print(type(error).__name__)
 
 except: 
-    MB_pump1.write_single_register(8, 0)
+    MB_pump1.write_single_register(8, 0)   #Turn off pumps
     MB_pump1.write_single_register(9, 0)
     MB_pump2.write_single_register(8, 0)
     MB_pump2.write_single_register(9, 0)
 
-    MB_cons.write_single_register(3,0)    #Close bottom valve 
-    MB_tower.write_single_register(3,0)   #Close bottom valve 
+    MB_cons.write_single_register(3, 0)    #Close bottom valve 
+    MB_tower.write_single_register(3, 0)   #Close bottom valve 
   
-    MB_cons.write_single_register(1,0)    #Open top valve
-    MB_cons.write_single_register(2,0)    #Open top valve
+    MB_cons.write_single_register(1, 0)    #Open top valve
+    MB_cons.write_single_register(2, 0)    #Open top valve
 
     print("Pumps turned off and valves closed due to exception")
 

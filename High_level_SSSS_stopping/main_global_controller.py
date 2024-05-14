@@ -17,13 +17,13 @@ if __name__ == '__main__':
 
     ll_reference_queue1 = multiprocessing.Queue(1)      #Make queue with one spot
     ll_reference_queue1.put(0)                          #Set reference to zero
-    low_level_control_process1 = multiprocessing.Process(target = low_level_controller,args = (settings_pump1,ll_reference_queue1,1,))
+    low_level_control_process1 = multiprocessing.Process(target = low_level_controller ,args = (settings_pump1, ll_reference_queue1, 1,))
     low_level_control_process1.start() 
     print("Low level controller started")
 
     ll_reference_queue2 = multiprocessing.Queue(1)      #Make queue with one spot
     ll_reference_queue2.put(0)                          #Set reference to zero
-    low_level_control_process2 = multiprocessing.Process(target = low_level_controller,args = (settings_pump2,ll_reference_queue2,2,))
+    low_level_control_process2 = multiprocessing.Process(target = low_level_controller, args = (settings_pump2, ll_reference_queue2, 2,))
     low_level_control_process2.start() 
     print("Low level controller started")
 
@@ -54,7 +54,7 @@ if __name__ == '__main__':
 
         next_sample_time  = current_sample_time + c_general["t_s"]     
         sleep_time = next_sample_time - time.time()
-        if sleep_time>0:  
+        if sleep_time > 0:  
             time.sleep(sleep_time)
         simulated_hour = simulated_hour + 1
         current_sample_time = time.time()

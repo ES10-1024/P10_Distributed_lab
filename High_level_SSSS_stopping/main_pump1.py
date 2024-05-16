@@ -12,7 +12,7 @@ from low_level_control import low_level_controller
 from logging import logging
 from Get_Electricity_Flow import electricity_price_and_flow
 
-use_low_level_ctrl = False
+use_low_level_ctrl = True
 use_high_level_ctrl = True
 
 

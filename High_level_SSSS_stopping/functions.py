@@ -15,8 +15,8 @@ class ADMM_optimiser_WDN:
         self.stop_criterion_start = 35      #When we start checking the stopping criteria
         self.n_iteration_stop_criteria = 5  #Run stopping criteria every xx iteration    
         self.between_stop_check = 5         #Iterations between checking stopping criteria 
-        self.epsilon_pri = 0.07             #Value the primal residual needs to be under
-        self.epsilon_dual = 0.06            #Value the dual residual needs to be under
+        self.epsilon_pri = 8.1642e-04            #Value the primal residual needs to be under
+        self.epsilon_dual = 7.1049e-04           #Value the dual residual needs to be under
         
         self.N_c = 24   #Control horizon
         self.N_s = 3    #Number of stakeholders
@@ -95,7 +95,7 @@ class ADMM_optimiser_WDN:
             #Increase rho with factor 500 at iteration 30
             if(k==30):
                 self.rho_last_solve = self.rho
-                self.rho = self.rho*500
+             #  self.rho = self.rho*500
                 
                 
             ###### Stopping criteria ######

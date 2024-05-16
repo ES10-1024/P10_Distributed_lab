@@ -11,8 +11,10 @@ from low_level_settings import settings_pump2
 from low_level_control import low_level_controller
 from logging import logging
 
-use_low_level_ctrl = True
+use_low_level_ctrl = True 
 use_high_level_ctrl = True
+
+always_simulated = False 
 
 print("Halow world")
 log  = logging("tower")
@@ -61,10 +63,11 @@ while True:
 
         next_sample_time  = current_sample_time + c_general["t_s"]     
         sleep_time = next_sample_time - time.time()
-        if sleep_time > 0:  
-                time.sleep(sleep_time)
-        else:
-                log.log("High level controller can not keep up with sampling time", 1, 1)
+        if (always_simulated == False): 
+                if sleep_time > 0:  
+                        time.sleep(sleep_time)
+                else:
+                        log.log("High level controller can not keep up with sampling time", 1, 1)
         simulated_hour = simulated_hour + 1
         current_sample_time = time.time()
 

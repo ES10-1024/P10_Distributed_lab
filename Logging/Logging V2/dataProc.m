@@ -41,7 +41,7 @@ endline(numWorkers,1)=TotalSize;
 outputStructs = {};
 
 tic 
-parfor i = 1:numWorkers
+for i = 1:numWorkers
     outputStructs{i} = logProc(data(startline(i,1):endline(i,1),:), IDLabels, groupNumber(startline(i,1):endline(i,1),1));
 end
 toc

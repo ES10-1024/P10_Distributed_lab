@@ -43,6 +43,7 @@ def low_level_controller(settings, refrence_queue, stakeholder:int):
                 MB_pump.write_single_register(settings['register_pump'], 0)     #Turn off pump
                 print("Safety level control active")
                 log.log("Safety level active",1,1)
+                integral = settings['initial_integral_value']
             else:
 
                 flow = 0.06/100*MB_flow.read_input_registers(settings['register_flow_pipe'], 1)[0] #Some unit

@@ -22,10 +22,10 @@ toc
 save(folder+'05-17_09-33.mat')
 %%
 clear 
-%folder = "C:\Users\laula\OneDrive - Aalborg Universitet\10. semester\Log_files\Distributed_system_2\"
-folder = "C:\Users\pppc\Desktop\Test_data_Lau_lauridsen\privacy_preserving_stop3\"
+folder = "C:\Users\laula\OneDrive - Aalborg Universitet\10. semester\Log_files\Distributed_system_6\"
+%folder = "C:\Users\pppc\Desktop\Test_data_Lau_lauridsen\privacy_preserving_stop3\"
 load(folder+'05-17_09-33.mat')
-%folder = "C:\Users\laula\OneDrive - Aalborg Universitet\10. semester\Log_files\Distributed_system_2\"
+folder = "C:\Users\laula\OneDrive - Aalborg Universitet\10. semester\Log_files\Distributed_system_6\"
 %% Evaluate valve controller
 clf
 subplot(1,3,1)
@@ -200,11 +200,26 @@ for l = pump1.SolutionTime(1:119)
     xlabel('Time [h_a]')
     
 
-    fontname(f,"Times")
-    drawnow
-    exportgraphics(f,folder+"plot.gif", Append=true)
-    if(i==80)
-        exportgraphics(f,folder+"ADMM_control_prediction1.pdf", Append=true) 
+    % fontname(f,"Times")
+    % %drawnow
+    % %exportgraphics(f,folder+"plot.gif", Append=true)
+    % if(i==80)
+    %     exportgraphics(f,folder+"ADMM_control_prediction1.pdf", Append=true) 
+    % end
+    if(i==100)
+        tower_vol = rw_con.tank_tower_mm(1:idx)*0.283;
+        tower_vol_time = (rw_con.tank_tower_mmTime(1:idx)-offset)/600;
+
+        sum_flow_time= sum_flow_time(1:idx)/600;
+        sum_flow = sum_flow_command(1:idx);
+
+        ADMM.tower_vol = tower_vol;
+        ADMM.tower_vol_time = tower_vol_time;
+
+        ADMM.flow = sum_flow;
+        ADMM.flow_time = sum_flow_time;
+
+        save(folder+'ADMM_compaison.mat', 'ADMM')
     end
 end
 

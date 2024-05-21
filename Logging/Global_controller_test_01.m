@@ -187,6 +187,22 @@ for l = pump1.SolutionTime(1:124)
     if(i==80)
         exportgraphics(f,folder+"Global_control_prediction.pdf", Append=true) 
     end
+
+    if(i==100)
+    tower_vol = rw_con.tank_tower_mm(1:idx)*0.283;
+    tower_vol_time = (rw_con.tank_tower_mmTime(1:idx)-offset)/600;
+
+    sum_flow_time= sum_flow_time(1:idx)/600;
+    sum_flow = sum_flow_command(1:idx);
+
+    Global.tower_vol = tower_vol;
+    Global.tower_vol_time = tower_vol_time;
+
+    Global.flow = sum_flow;
+    Global.flow_time = sum_flow_time;
+
+    save(folder+'Global_compaison.mat', 'Global')
+    end
 end
 
 

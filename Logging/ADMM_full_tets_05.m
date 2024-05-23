@@ -201,12 +201,12 @@ for l = pump1.SolutionTime(1:112)
     xlabel('Time [h_a]')
     
 
-%     fontname(f,"Times")
-%     drawnow
-%     exportgraphics(f,folder+"plot.gif", Append=true)
-%     if(i==80)
-%         exportgraphics(f,folder+"ADMM_control_prediction1.pdf", Append=true) 
-%     end
+    fontname(f,"Times")
+    drawnow
+    exportgraphics(f,folder+"plot.gif", Append=true)
+    if(i==80)
+        exportgraphics(f,folder+"ADMM_control_prediction1.pdf", Append=true) 
+    end
     if(i==80)
         ADMM.tower_vol = rw_con.tank_tower_mm(1:idx3)*0.283;
         ADMM.tower_vol_time = (rw_con.tank_tower_mmTime(1:idx3)-offset)/600;

@@ -22,10 +22,10 @@ toc
 save(folder+'05-21_15-41.mat')
 %%
 clear 
-folder = "C:\Users\pppc\Desktop\Test_data_Lau_lauridsen\privacy_preserving_stop4\"
+folder = "C:\Users\laula\OneDrive - Aalborg Universitet\10. semester\Log_files\Distributed_system_7\"
 %folder = "C:\Users\pppc\Desktop\Test_data_Lau_lauridsen\privacy_preserving_stop3\"
 load(folder+'05-21_15-41.mat')
-folder = "C:\Users\pppc\Desktop\Test_data_Lau_lauridsen\privacy_preserving_stop4\"
+folder = "C:\Users\laula\OneDrive - Aalborg Universitet\10. semester\Log_files\Distributed_system_7\"
 %% Evaluate valve controller
 clf
 subplot(1,3,1)
@@ -102,7 +102,7 @@ for l = pump1.SolutionTime(1:112)
     disp(i)
     
     %Electricity price 
-    tiledlayout(2,2, "TileSpacing","compact")
+    tiledlayout(4,1, "TileSpacing","compact")
     %Prediction
     nexttile
     pump1.electricity_price(:,i)
@@ -115,7 +115,7 @@ for l = pump1.SolutionTime(1:112)
     xlabel('Time [h_a]')
     grid 
     xlim([(pump1.SolutionTime(1)-offset)/600 (pump1.SolutionTime(1)-offset)/600+100])
-    ylim([min(min(squeeze(pump1.electricity_price))) max(max(squeeze(pump1.electricity_price)))])
+    ylim([0 0.2])
 
     
    
@@ -133,11 +133,11 @@ for l = pump1.SolutionTime(1:112)
     stairs(sum_flow_prediction2_time/600,sum_flow_prediction2)
     stairs(sum_flow_prediction3_time/600,sum_flow_prediction3)
     %Past flow
-    [~,idx] = min(abs(sum_flow_time-l+offset));
-    plot(sum_flow_time(1:idx)/600, movmean(sum_flow(1:idx),60))
+    [~,idx1] = min(abs(sum_flow_time-l+offset));
+    plot(sum_flow_time(1:idx1)/600, movmean(sum_flow(1:idx1),60))
     %Past commands
-    [~,idx] = min(abs(sum_flow_time-l+offset));
-    plot(sum_flow_time(1:idx)/600, sum_flow_command(1:idx))
+    [~,idx2] = min(abs(sum_flow_time-l+offset));
+    plot(sum_flow_time(1:idx2)/600, sum_flow_command(1:idx2))
     ylabel('Sum of flows [m^3/h]')
     xlabel('Time [h_a]')
     ylim([0 0.6])
@@ -169,8 +169,8 @@ for l = pump1.SolutionTime(1:112)
     plot(sum_flow_prediction2_time/600,tower_volume2)
     plot(sum_flow_prediction3_time/600,tower_volume3)
     %Past
-    [~,idx] = min(abs(rw_con.tank_tower_mmTime-l));
-    plot((rw_con.tank_tower_mmTime(1:idx)-offset)/600,rw_con.tank_tower_mm(1:idx)*0.283)
+    [~,idx3] = min(abs(rw_con.tank_tower_mmTime-l));
+    plot((rw_con.tank_tower_mmTime(1:idx3)-offset)/600,rw_con.tank_tower_mm(1:idx3)*0.283)
     yline(28)
     yline(155)
     ylabel("Volume in tower [L]")
@@ -192,33 +192,37 @@ for l = pump1.SolutionTime(1:112)
     %Commanded
     [~,idx] = min(abs(rw_con.DemandTime-l))
     plot(rw_con.DemandTime(1:idx)/600-offset/600,rw_con.Demand(1:idx))
-    ylim([0 0.6])
+    ylim([0 0.4])
     xlim([(pump1.SolutionTime(1)-offset)/600 (pump1.SolutionTime(1)-offset)/600+100])
     grid
-    legend("Prediction pump 1", "Prediction pump 2", "Prediction tower", "Measured", "Commanded", Location="northwest")
+    lgd = legend("Prediction pump 1", "Prediction pump 2", "Prediction tower", "Measured", "Commanded", 'Orientation','Horizontal')
+    lgd.Layout.Tile = 'south';
     ylabel('Consumption [m^3/h]')
     xlabel('Time [h_a]')
     
 
-    fontname(f,"Times")
-    drawnow
-    exportgraphics(f,folder+"plot.gif", Append=true)
+%     fontname(f,"Times")
+%     drawnow
+%     exportgraphics(f,folder+"plot.gif", Append=true)
+%     if(i==80)
+%         exportgraphics(f,folder+"ADMM_control_prediction1.pdf", Append=true) 
+%     end
     if(i==80)
-        exportgraphics(f,folder+"ADMM_control_prediction1.pdf", Append=true) 
-    end
-    if(i==100)
-        tower_vol = rw_con.tank_tower_mm(1:idx)*0.283;
-        tower_vol_time = (rw_con.tank_tower_mmTime(1:idx)-offset)/600;
+        ADMM.tower_vol = rw_con.tank_tower_mm(1:idx3)*0.283;
+        ADMM.tower_vol_time = (rw_con.tank_tower_mmTime(1:idx3)-offset)/600;
 
-        sum_flow_time= sum_flow_time(1:idx)/600;
-        sum_flow = sum_flow_command(1:idx);
+        ADMM.tower_vol_prediction1 = tower_volume1
+        ADMM.tower_vol_prediction2 = tower_volume2
+        ADMM.tower_vol_prediction3 = tower_volume3
+        ADMM.tower_vol_prediction1_time = (pump2.Simulated_hourTime(i)-offset + (0:24)*600)/600;
 
-        ADMM.tower_vol = tower_vol;
-        ADMM.tower_vol_time = tower_vol_time;
+        ADMM.flow_time = sum_flow_time(1:idx1)/600;
+        ADMM.flow = sum_flow_command(1:idx1)
 
-        ADMM.flow = sum_flow;
-        ADMM.flow_time = sum_flow_time;
-
+        ADMM.flow_prediction1 = sum_flow_prediction1
+        ADMM.flow_prediction2 = sum_flow_prediction2
+        ADMM.flow_prediction3 = sum_flow_prediction3
+        ADMM.flow_prediction1_time = sum_flow_prediction1_time/600
         save(folder+'ADMM_compaison.mat', 'ADMM')
     end
 end

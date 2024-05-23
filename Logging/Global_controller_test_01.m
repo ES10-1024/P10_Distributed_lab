@@ -100,7 +100,7 @@ for l = pump1.SolutionTime(1:124)
     disp(i)
     
     %Electricity price 
-    tiledlayout(2,2, "TileSpacing","compact")
+    tiledlayout(4,1, "TileSpacing","compact")
     %Prediction
     nexttile
     pump1.electricity_price(:,i)
@@ -113,7 +113,7 @@ for l = pump1.SolutionTime(1:124)
     xlabel('Time [h_a]')
     grid 
     xlim([(pump1.SolutionTime(1)-offset)/600 (pump1.SolutionTime(1)-offset)/600+100])
-    ylim([min(min(squeeze(pump1.electricity_price))) max(max(squeeze(pump1.electricity_price)))])
+    ylim([0 0.2])
 
     
    
@@ -126,11 +126,11 @@ for l = pump1.SolutionTime(1:124)
     stairs(sum_flow_prediction1_time/600,sum_flow_prediction1, 'Color',"#EDB120")
     hold on
     %Past flow
-    [~,idx] = min(abs(sum_flow_time-l+offset));
-    plot(sum_flow_time(1:idx)/600, movmean(sum_flow(1:idx),60), 'Color',	"#7E2F8E")
+    [~,idx1] = min(abs(sum_flow_time-l+offset));
+    plot(sum_flow_time(1:idx1)/600, movmean(sum_flow(1:idx1),60), 'Color',	"#7E2F8E")
     %Past commands
-    [~,idx] = min(abs(sum_flow_time-l+offset));
-    plot(sum_flow_time(1:idx)/600, sum_flow_command(1:idx), 'color', "#77AC30")
+    [~,idx2] = min(abs(sum_flow_time-l+offset));
+    plot(sum_flow_time(1:idx2)/600, sum_flow_command(1:idx2), 'color', "#77AC30")
     ylabel('Sum of flows [m^3/h]')
     xlabel('Time [h_a]')
     ylim([0 0.6])
@@ -168,39 +168,40 @@ for l = pump1.SolutionTime(1:124)
     %stairs(price_prediction_time/600, pump1.demand_pred(:,i))
     %stairs(price_prediction_time/600, pump1.demand_pred(:,i))
     %Flow
-    [~,idx] = min(abs(consumption_time-l+offset));
-    plot(consumption_time(1:idx)/600, movmean(sum_consumption(1:idx),60), 'Color',	"#7E2F8E")
+    [~,idx3] = min(abs(consumption_time-l+offset));
+    plot(consumption_time(1:idx3)/600, movmean(sum_consumption(1:idx3),60), 'Color',	"#7E2F8E")
     %Commanded
     [~,idx] = min(abs(rw_con.DemandTime-l))
     plot(rw_con.DemandTime(1:idx)/600-offset/600,rw_con.Demand(1:idx),'Color',	"#77AC30")
-    ylim([0 0.6])
+    ylim([0 0.4])
     xlim([(pump1.SolutionTime(1)-offset)/600 (pump1.SolutionTime(1)-offset)/600+100])
     grid
-    legend("Prediction", "Measured", "Commanded", Location="northwest")
+    lgd = legend("Prediction", "Measured", "Commanded", 'Orientation','Horizontal')
+    lgd.Layout.Tile = 'south';
     ylabel('Consumption [m^3/h]')
     xlabel('Time [h_a]')
     
 
-    fontname(f,"Times")
-    drawnow
-    exportgraphics(f,folder+"plot.gif", Append=true)
+%     fontname(f,"Times")
+%     exportgraphics(f,folder+"plot.gif", Append=true)
+%     if(i==80)
+%         exportgraphics(f,folder+"Global_control_prediction.pdf", Append=true) 
+%     end
+
     if(i==80)
-        exportgraphics(f,folder+"Global_control_prediction.pdf", Append=true) 
-    end
+    Global.tower_vol = rw_con.tank_tower_mm(1:idx3)*0.283;
+    Global.tower_vol_time = (rw_con.tank_tower_mmTime(1:idx3)-offset);
 
-    if(i==100)
-    tower_vol = rw_con.tank_tower_mm(1:idx)*0.283;
-    tower_vol_time = (rw_con.tank_tower_mmTime(1:idx)-offset)/600;
+    Global.tower_vol_prediction = tower_volume1
+    Global.tower_vol_prediction_time = sum_flow_prediction1_time/600;
 
-    sum_flow_time= sum_flow_time(1:idx)/600;
-    sum_flow = sum_flow_command(1:idx);
+    Global.flow_time = sum_flow_time(1:idx1)/600;
+    Global.flow = sum_flow_command(1:idx1);
 
-    Global.tower_vol = tower_vol;
-    Global.tower_vol_time = tower_vol_time;
+    Global.flow_prediction = sum_flow_prediction1
+    Global.flow_prediction_time = sum_flow_prediction1_time/600
 
-    Global.flow = sum_flow;
-    Global.flow_time = sum_flow_time;
-
+    
     save(folder+'Global_compaison.mat', 'Global')
     end
 end

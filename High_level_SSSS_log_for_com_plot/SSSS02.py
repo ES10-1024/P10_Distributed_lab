@@ -63,7 +63,7 @@ class SSSS:
             b2x1 = b2x1.reshape(-1, 1)
             b3x1 = b3x1.reshape(-1, 1)
             
-            b1 = (b1x1 + b2x1 + b3x1) % self.Beta   #Sum the received shares
+            b1 = b1x1 + b2x1 + b3x1   #Sum the received shares
             
             self.conn1.sendall(b1.tobytes())  #Distribute sum of shares
             self.conn2.sendall(b1.tobytes())
@@ -90,7 +90,7 @@ class SSSS:
             b2x2 = b2x2.reshape(-1, 1)
             b3x2 = b3x2.reshape(-1, 1)
             
-            b2 = (b1x2 + b2x2 + b3x2) % self.Beta
+            b2 = b1x2 + b2x2 + b3x2
             
             self.conn1.sendall(b2.tobytes())  
             self.conn2.sendall(b2.tobytes())
@@ -117,7 +117,7 @@ class SSSS:
             b2x3 = b2x3.reshape(-1, 1)
             b3x3 = b3x3.reshape(-1, 1)
 
-            b3 = (b1x3 + b2x3 + b3x3 ) % self.Beta
+            b3 = b1x3 + b2x3 + b3x3 
 
             self.conn1.sendall(b3.tobytes())  
             self.conn2.sendall(b3.tobytes())

@@ -11,7 +11,7 @@ from low_level_settings import settings_pump2
 from low_level_control import low_level_controller
 from logging import logging
 
-use_low_level_ctrl = True
+use_low_level_ctrl = False
 use_high_level_ctrl = True
 
 always_simulated = False 

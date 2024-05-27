@@ -1,5 +1,5 @@
 import numpy as np
-from Solve_each_ADMM import performOptimisation
+from solve_local_optimisation_problem import performOptimisation
 from logging import logging
 from SMPC import SSSS
 

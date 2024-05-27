@@ -5,9 +5,9 @@ import multiprocessing
 from pyModbusTCP.client import ModbusClient
 import random
 
-from functions import ADMM_optimiser_WDN
+from Hand_In.ADMM import ADMM_optimiser_WDN
 from constants import c_general
-from low_level_settings import settings_pump2
+from constants import settings_pump2
 from logging import logging
 
 use_low_level_ctrl = True

@@ -1,5 +1,5 @@
 clear
-folder = "C:\Users\laula\OneDrive - Aalborg Universitet\10. semester\Log_files\Global_controller_1\"
+folder = "C:\Users\laula\OneDrive - Aalborg Universitet\10. semester\Log_files\Global_controller_2\"
 load(folder+'Global_compaison.mat')
 folder = "C:\Users\laula\OneDrive - Aalborg Universitet\10. semester\Log_files\Distributed_system_7\"
 load(folder+'ADMM_compaison.mat')

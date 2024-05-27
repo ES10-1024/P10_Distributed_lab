@@ -11,8 +11,7 @@ class logging:
         timestamp = datetime.now().strftime("%m-%d_%H-%M-%S")
         self.filename = f"Logging/Log_files/{filename}_{timestamp}.csv"
         self.header = ['ID','Data','Time']  # Use the passed header value
-        #self.header = ['ID','Data']  # Use the passed header value
-        self.init_time = 1714561011       #To make time stamp values smaller
+        self.init_time = 1714561011         # To make time stamp values smaller
 
         # Check if the file exists, if not, create it
         if not os.path.exists(self.filename):
@@ -22,7 +21,7 @@ class logging:
                     csv_writer.writerow(self.header)
                     csv_writer.writerow([])
                     
-     # Writing data to the class              
+    # Writing data to the log file              
     def log(self, ID, data, n_decimals):
          data=[ID, np.round(data, n_decimals), np.round(time.time()-self.init_time,3)]
         

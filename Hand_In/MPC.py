@@ -1,7 +1,5 @@
 import numpy as np
 import random
-from logging import logging 
-
 
 class SSSS: 
     def __init__(self, conn1, conn2, stakeholder_id: int,log ):
@@ -12,8 +10,7 @@ class SSSS:
         self.scaling = 10000    #Scaling such rounding becomes insignificant
         self.Beta = int (4294967029) # Prime number used for SSSS    
         self.N_s = 3            #Number of stakeholders
-        self.stakeholder_id = stakeholder_id
-        self.log = logging("smpc"+str(stakeholder_id)) 
+        self.stakeholder_id = stakeholder_id 
     
     #Generating shares based on secret. Secret is at first casted to finite field. Support for vector and scalar inputs
     def get_shares(self, secret): 
@@ -44,7 +41,7 @@ class SSSS:
         return sum
     
     #Make calculation of sum. Function includes networking
-    def sum(self,secret, log_on : bool): 
+    def sum(self,secret): 
         if not isinstance(secret, np.ndarray):
             secret = np.array([secret])
         shares = self.get_shares(secret)
@@ -56,8 +53,6 @@ class SSSS:
 
             self.conn1.sendall(b1x2.tobytes())  #Distribute share vectors to the rest of the stakeholders: 
             self.conn2.sendall(b1x3.tobytes())
-            if(log_on == True):
-                self.log.log("b1x2", b1x2, 1)
             
             b2x1 = np.frombuffer(self.conn1.recv(8*secret.shape[0]), dtype=b1x1.dtype) #Receiving share vectors the others: 
             b3x1 = np.frombuffer(self.conn2.recv(8*secret.shape[0]), dtype=b1x1.dtype)
@@ -66,14 +61,10 @@ class SSSS:
             b2x1 = b2x1.reshape(-1, 1)
             b3x1 = b3x1.reshape(-1, 1)
             
-            b1 = (b1x1 + b2x1 + b3x1) % self.Beta  #Sum the received shares
+            b1 = (b1x1 + b2x1 + b3x1) % self.Beta   #Sum the received shares
             
             self.conn1.sendall(b1.tobytes())  #Distribute sum of shares
             self.conn2.sendall(b1.tobytes())
-            if(log_on == True):
-                self.log.log("b1", b1 ,1)
-                print(type(b1))
-                print(b1.dtype())
             
             b2 = np.frombuffer(self.conn1.recv(8*secret.shape[0]), dtype=b1.dtype) #Recive sum of shares
             b3 = np.frombuffer(self.conn2.recv(8*secret.shape[0]), dtype=b1.dtype)
@@ -97,7 +88,7 @@ class SSSS:
             b2x2 = b2x2.reshape(-1, 1)
             b3x2 = b3x2.reshape(-1, 1)
             
-            b2 = b1x2 + b2x2 + b3x2
+            b2 = (b1x2 + b2x2 + b3x2) % self.Beta
             
             self.conn1.sendall(b2.tobytes())  
             self.conn2.sendall(b2.tobytes())
@@ -124,7 +115,7 @@ class SSSS:
             b2x3 = b2x3.reshape(-1, 1)
             b3x3 = b3x3.reshape(-1, 1)
 
-            b3 = b1x3 + b2x3 + b3x3 
+            b3 = (b1x3 + b2x3 + b3x3 ) % self.Beta
 
             self.conn1.sendall(b3.tobytes())  
             self.conn2.sendall(b3.tobytes())

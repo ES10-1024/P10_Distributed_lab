@@ -5,7 +5,7 @@ import multiprocessing
 from pyModbusTCP.client import ModbusClient
 import random
 
-from Hand_In.ADMM import ADMM_optimiser_WDN
+from ADMM import ADMM_optimiser_WDN
 from constants import c_general
 from constants import settings_pump2
 from logging import logging

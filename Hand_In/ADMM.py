@@ -1,7 +1,7 @@
 import numpy as np
 from Solve_each_ADMM import performOptimisation
 from logging import logging
-from Hand_In.MPC import SSSS
+from SMPC import SSSS
 
 class ADMM_optimiser_WDN:
     def __init__(self, conn1, conn2, stakeholder: int):

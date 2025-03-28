@@ -67,4 +67,7 @@ lgd = legend("Privacy-preserving controller prediction pump 2",  "Global control
 lgd.Layout.Tile = 'south';
 f.Renderer='Painters';
 exportgraphics(f, 'comparison.pdf')
+
+
+%% Comparison plot for article
  

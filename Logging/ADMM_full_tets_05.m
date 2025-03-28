@@ -24,58 +24,9 @@ save(folder+'05-21_15-41.mat')
 clear 
 folder = "C:\Users\laula\OneDrive - Aalborg Universitet\10. semester\Log_files\Distributed_system_7\"
 %folder = "C:\Users\pppc\Desktop\Test_data_Lau_lauridsen\privacy_preserving_stop3\"
+ADMM = load(folder+'05-21_15-41.mat')
 load(folder+'05-21_15-41.mat')
 folder = "C:\Users\laula\OneDrive - Aalborg Universitet\10. semester\Log_files\Distributed_system_7\"
-%% Evaluate valve controller
-clf
-subplot(1,3,1)
-plot(rw_con.DemandTime/60, rw_con.Demand, rw_con.Flow_valve1Time/60, rw_con.Flow_valve1 + rw_con.Flow_valve2)
-xlabel("Time  [min]")
-ylabel("Flow [m^3/h]")
-legend("Demanded","Measured sum")
-ylim([0 0.7])
-
-subplot(1,3,2)
-plot(rw_con.DemandTime/60, rw_con.Demand, rw_con.Flow_valve1Time/60, rw_con.Flow_valve1)
-xlabel("Time  [min]")
-ylabel("Flow [m^3/h]")
-legend("Demanded","Measured valve 1")
-ylim([0 0.7])
-
-subplot(1,3,3)
-plot(rw_con.DemandTime/60, rw_con.Demand, rw_con.Flow_valve2Time/60, rw_con.Flow_valve2)
-xlabel("Time  [min]")
-ylabel("Flow [m^3/h]")
-legend("Demanded","Measured valve 2")
-ylim([0 0.7])
-
-%% Eavluate pump flow controller
-clf
-subplot(1,2,1)
-yyaxis left
-plot(pump2_ctrl.flowTime, movmean(pump2_ctrl.flow,20))
-hold on
-stairs(pump2_ctrl.refTime, pump2_ctrl.ref)
-ylim([0.025 0.3])
-ylabel("Flow [m^3/h]")
-yyaxis right
-plot(pump2_ctrl.Pump_percentageTime(100:end), pump2_ctrl.Pump_percentage(100:end))
-ylabel("Actuation [0-100]")
-
-subplot(1,2,2)
-yyaxis left
-plot(pump3_ctrl.flowTime, movmean(pump3_ctrl.flow,20))
-hold on
-stairs(pump3_ctrl.refTime, pump3_ctrl.ref)
-ylim([0.025 0.3])
-ylabel("Flow [m^3/h]")
-yyaxis right
-plot(pump3_ctrl.Pump_percentageTime(100:end), pump3_ctrl.Pump_percentage(100:end))
-ylabel("Actuation [0-100]")
-
-
-
-
 %% Evaluate high level controller
 
 

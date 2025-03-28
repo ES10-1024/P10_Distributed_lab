@@ -17,10 +17,10 @@ toc
 save(folder+'05-23_06-28.mat')
 %%
 clear 
-folder = "C:\Users\laula\OneDrive - Aalborg Universitet\10. semester\Log_files\Global_controller_1\"
+folder = "C:\Users\laula\OneDrive - Aalborg Universitet\10. semester\Log_files\Global_controller_2\"
 %folder = "C:\Users\pppc\Desktop\Test_data_Lau_lauridsen"
-load(folder+'05-07_11-24.mat')
-folder = "C:\Users\laula\OneDrive - Aalborg Universitet\10. semester\Log_files\Global_controller_1\"
+load(folder+'05-23_06-28.mat')
+folder = "C:\Users\laula\OneDrive - Aalborg Universitet\10. semester\Log_files\Global_controller_2\"
 %% Evaluate valve controller
 clf
 subplot(1,3,1)
@@ -182,11 +182,11 @@ for l = pump1.SolutionTime(1:124)
     xlabel('Time [h_a]')
     
 
-    fontname(f,"Times")
-    exportgraphics(f,folder+"plot.gif", Append=true)
-    if(i==80)
-        exportgraphics(f,folder+"Global_control_prediction.pdf", Append=true) 
-    end
+%     fontname(f,"Times")
+%     exportgraphics(f,folder+"plot.gif", Append=true)
+%     if(i==80)
+%         exportgraphics(f,folder+"Global_control_prediction.pdf", Append=true) 
+%     end
 
     if(i==80)
     Global.tower_vol = rw_con.tank_tower_mm(1:idx3)*0.283;
@@ -201,9 +201,19 @@ for l = pump1.SolutionTime(1:124)
     Global.flow_prediction = sum_flow_prediction1
     Global.flow_prediction_time = sum_flow_prediction1_time/600
 
-    
+    Global.El_price  = pump1.electricity_price(1,1:101);
+
+    Global.consumption = rw_con.Demand(1:idx)
+    Global.consumption_time = rw_con.DemandTime(1:idx)/600-offset/600;
+
+    Global.consumption_pred = price_prediction_time/600
+    Global.consumption_pred_time = pump1.demand_pred(:,i);
+
+
     save(folder+'Global_compaison.mat', 'Global')
     end
+
+    
 end
 
 
